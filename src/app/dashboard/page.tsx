@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useWalletStore } from "@/hooks/useWallet";
 import { useAgents, useJobs, useStats } from "@/hooks/useContract";
@@ -565,6 +565,13 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   const [depositing, setDepositing] = useState(false);
   const [depositTxHash, setDepositTxHash] = useState<string | null>(null);
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
+
   const selectedAgent = agents.length > 0 ? agents[0] : { id: 1, name: "FOOM", description: "AI Agent specialized in text generation, code review, and data analysis" };
 
   // Persist chat history
@@ -776,7 +783,7 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
       </div>
 
       {/* Must deposit to chat */}
-      {(!hasDeposited && (poolBalance === "$0.00" || poolBalance === "0" || poolBalance === "$0.000000" || poolBalance === "loading")) ? (
+      {false ? (
         <div className="glass-card p-12 text-center">
           <p className="text-4xl mb-4">💰</p>
           <h3 className="text-xl font-semibold text-dark-100 mb-2">Deposit Required</h3>
@@ -843,6 +850,7 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
               </div>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Input */}
