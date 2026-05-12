@@ -18,6 +18,7 @@ export function Navbar() {
             <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AF</span>
             </div>
+            <img src="/logo.jpg" alt="AgentForge" className="h-8 w-8 rounded-lg" />
             <span className="text-xl font-bold gradient-text">AgentForge</span>
           </Link>
 
