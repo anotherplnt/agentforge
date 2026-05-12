@@ -87,10 +87,25 @@ export function useAgents() {
           reputationScore: bigint;
           registeredAt: bigint;
         };
+        // Parse metadata URI to get name/description
+        let name = "";
+        let description = "";
+        try {
+          const uri = agent.metadataURI;
+          if (uri.startsWith("data:application/json,")) {
+            const jsonStr = decodeURIComponent(uri.replace("data:application/json,", ""));
+            const meta = JSON.parse(jsonStr);
+            name = meta.name || "";
+            description = meta.description || "";
+          }
+        } catch {}
+
         return {
           id: Number(agent.id),
           owner: agent.owner,
           metadataURI: agent.metadataURI,
+          name,
+          description,
           capabilities: agent.capabilities,
           pricePerTask: agent.pricePerTask.toString(),
           pricePerInference: agent.pricePerInference.toString(),
