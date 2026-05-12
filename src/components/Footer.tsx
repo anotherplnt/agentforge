@@ -44,7 +44,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-dark-400 hover:text-white transition-colors">
+                <a href="https://github.com/anotherplnt" target="_blank" rel="noopener noreferrer" className="text-dark-400 hover:text-white transition-colors">
                   GitHub
                 </a>
               </li>
@@ -58,9 +58,7 @@ export function Footer() {
           </p>
           <div className="flex items-center gap-2 text-xs text-dark-500">
             <span>Powered by</span>
-            <span className="text-accent-400 font-medium">Circle</span>
-            <span>×</span>
-            <span className="text-primary-400 font-medium">Arc Network</span>
+            <span className="text-accent-400 font-medium">ogzulla</span>
           </div>
         </div>
       </div>
