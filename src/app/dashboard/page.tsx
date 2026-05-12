@@ -541,9 +541,18 @@ function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; addre
 }
 
 function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
-  const [messages, setMessages] = useState<{ role: "user" | "agent"; content: string; cost?: string }[]>([
-    { role: "agent", content: "Hello! I'm FOOM, your AI Agent on AgentForge. Each message costs $0.01 USDC via nanopayments. How can I help you today?" },
-  ]);
+  const [messages, setMessages] = useState<{ role: "user" | "agent"; content: string; cost?: string }[]>(() => {
+    if (typeof window === "undefined") return [
+      { role: "agent", content: "Hello! I'm FOOM, your AI Agent on AgentForge. Each message costs $0.01 USDC via nanopayments. How can I help you today?" },
+    ];
+    const saved = localStorage.getItem("agentforge_chat_history");
+    if (saved) {
+      try { return JSON.parse(saved); } catch {}
+    }
+    return [
+      { role: "agent", content: "Hello! I'm FOOM, your AI Agent on AgentForge. Each message costs $0.01 USDC via nanopayments. How can I help you today?" },
+    ];
+  });
   const [input, setInput] = useState("");
   const [totalCost, setTotalCost] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
@@ -553,6 +562,13 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   const [depositTxHash, setDepositTxHash] = useState<string | null>(null);
 
   const selectedAgent = agents.length > 0 ? agents[0] : { id: 1, name: "FOOM", description: "AI Agent specialized in text generation, code review, and data analysis" };
+
+  // Persist chat history
+  useEffect(() => {
+    if (typeof window !== "undefined" && messages.length > 1) {
+      localStorage.setItem("agentforge_chat_history", JSON.stringify(messages));
+    }
+  }, [messages]);
 
   // Fetch inference pool balance
   useEffect(() => {
@@ -623,6 +639,29 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
     setIsTyping(true);
 
     try {
+      // Charge inference on-chain first
+      try {
+        await switchToArcTestnet();
+        const chargeHash = await sendContractTx({
+          address: CONTRACT_ADDRESS,
+          abi: AGENTFORGE_ABI,
+          functionName: "chargeInference",
+          args: [BigInt(selectedAgent?.id || 1)],
+          from: address,
+        });
+        // Don't wait for receipt — continue to AI response
+      } catch (chargeErr: any) {
+        console.error("Charge failed:", chargeErr);
+        // If charge fails (insufficient pool), block the message
+        setMessages((prev) => [
+          ...prev,
+          { role: "agent", content: "⚠️ Insufficient pool balance. Please deposit more USDC to continue chatting.", cost: "$0.00" },
+        ]);
+        setIsTyping(false);
+        return;
+      }
+
+      // Get AI response
       const res = await fetch("/api/inference", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -646,6 +685,10 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
         ...prev,
         { role: "agent", content: data.response || "Processing complete.", cost: `$${cost.toFixed(4)}` },
       ]);
+
+      // Refresh pool balance
+      setDepositing(prev => !prev);
+      setTimeout(() => setDepositing(prev => !prev), 100);
     } catch (err) {
       console.error("Inference error:", err);
       setMessages((prev) => [
