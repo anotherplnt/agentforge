@@ -160,70 +160,148 @@ export default function JobDetailPage() {
           </div>
 
           {/* Actions */}
-          {job.status === 0 && (
-            <div className="glass-card p-6">
-              <h3 className="text-lg font-semibold text-dark-100 mb-4">Actions</h3>
+          <div className="glass-card p-6">
+            <h3 className="text-lg font-semibold text-dark-100 mb-4">Actions</h3>
 
-              {bidSuccess && (
-                <div className="mb-4 p-3 bg-accent-500/10 border border-accent-500/30 rounded-lg text-accent-400 text-sm">
-                  ✅ Bid placed successfully!
-                  {bidTxHash && (
-                    <a href={getExplorerUrl("tx", bidTxHash)} target="_blank" rel="noopener noreferrer" className="block mt-1 text-primary-400 underline text-xs">
-                      View on ArcScan →
-                    </a>
-                  )}
-                </div>
-              )}
-
-              {bidError && (
-                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-                  ❌ {bidError}
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {!isConnected ? (
-                  <button onClick={connect} className="btn-primary w-full">Connect Wallet to Bid</button>
-                ) : (
-                  <button
-                    onClick={async () => {
-                      setBidding(true);
-                      setBidError(null);
-                      setBidSuccess(false);
-                      try {
-                        await switchToArcTestnet();
-                        const hash = await sendContractTx({
-                          address: CONTRACT_ADDRESS,
-                          abi: AGENTFORGE_ABI,
-                          functionName: "bidOnJob",
-                          args: [BigInt(job.id), BigInt(job.budget), "I can complete this task efficiently.", BigInt(86400)],
-                          from: address!,
-                        });
-                        setBidTxHash(hash);
-                        setBidSuccess(true);
-                      } catch (err: any) {
-                        setBidError(err?.shortMessage || err?.message || "Transaction failed");
-                      } finally {
-                        setBidding(false);
-                      }
-                    }}
-                    disabled={bidding}
-                    className="btn-primary w-full"
-                  >
-                    {bidding ? "⏳ Confirm in Wallet..." : "Place a Bid"}
-                  </button>
+            {bidSuccess && (
+              <div className="mb-4 p-3 bg-accent-500/10 border border-accent-500/30 rounded-lg text-accent-400 text-sm">
+                ✅ Transaction successful!
+                {bidTxHash && (
+                  <a href={getExplorerUrl("tx", bidTxHash)} target="_blank" rel="noopener noreferrer" className="block mt-1 text-primary-400 underline text-xs">
+                    View on ArcScan →
+                  </a>
                 )}
-                <a
-                  href={getExplorerUrl("address", job.client)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary w-full text-center block"
-                >
-                  View Client on Explorer
-                </a>
               </div>
+            )}
+
+            {bidError && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                ❌ {bidError}
+              </div>
+            )}
+
+            <div className="space-y-3">
+              {!isConnected ? (
+                <button onClick={connect} className="btn-primary w-full">Connect Wallet</button>
+              ) : (
+                <>
+                  {/* Status 0: Open — Agent can bid, Client can assign */}
+                  {job.status === 0 && (
+                    <>
+                      {address?.toLowerCase() !== job.client?.toLowerCase() && (
+                        <button
+                          onClick={async () => {
+                            setBidding(true); setBidError(null); setBidSuccess(false);
+                            try {
+                              await switchToArcTestnet();
+                              const hash = await sendContractTx({
+                                address: CONTRACT_ADDRESS, abi: AGENTFORGE_ABI,
+                                functionName: "bidOnJob",
+                                args: [BigInt(job.id), BigInt(job.budget), "I can complete this task efficiently.", BigInt(86400)],
+                                from: address!,
+                              });
+                              setBidTxHash(hash); setBidSuccess(true);
+                            } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
+                            finally { setBidding(false); }
+                          }}
+                          disabled={bidding} className="btn-primary w-full"
+                        >
+                          {bidding ? "⏳ Confirm..." : "🤖 Place a Bid"}
+                        </button>
+                      )}
+                      {address?.toLowerCase() === job.client?.toLowerCase() && job.bidCount > 0 && (
+                        <button
+                          onClick={async () => {
+                            setBidding(true); setBidError(null); setBidSuccess(false);
+                            try {
+                              await switchToArcTestnet();
+                              // Assign first bidder (in real app, client would choose)
+                              const hash = await sendContractTx({
+                                address: CONTRACT_ADDRESS, abi: AGENTFORGE_ABI,
+                                functionName: "assignJob",
+                                args: [BigInt(job.id), BigInt(0)],
+                                from: address!,
+                              });
+                              setBidTxHash(hash); setBidSuccess(true);
+                              setTimeout(() => fetchJobs(), 3000);
+                            } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
+                            finally { setBidding(false); }
+                          }}
+                          disabled={bidding} className="btn-primary w-full"
+                        >
+                          {bidding ? "⏳ Confirm..." : "✅ Assign Agent"}
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                  {/* Status 1/2: Assigned/InProgress — Agent can submit deliverable */}
+                  {(job.status === 1 || job.status === 2) && address?.toLowerCase() === job.assignedAgent?.toLowerCase() && (
+                    <button
+                      onClick={async () => {
+                        setBidding(true); setBidError(null); setBidSuccess(false);
+                        try {
+                          await switchToArcTestnet();
+                          const hash = await sendContractTx({
+                            address: CONTRACT_ADDRESS, abi: AGENTFORGE_ABI,
+                            functionName: "submitDeliverable",
+                            args: [BigInt(job.id), "https://github.com/anotherplnt/agentforge/deliverable"],
+                            from: address!,
+                          });
+                          setBidTxHash(hash); setBidSuccess(true);
+                          setTimeout(() => fetchJobs(), 3000);
+                        } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
+                        finally { setBidding(false); }
+                      }}
+                      disabled={bidding} className="btn-primary w-full"
+                    >
+                      {bidding ? "⏳ Confirm..." : "📦 Submit Deliverable"}
+                    </button>
+                  )}
+
+                  {/* Status 3: Delivered — Client can approve */}
+                  {job.status === 3 && address?.toLowerCase() === job.client?.toLowerCase() && (
+                    <button
+                      onClick={async () => {
+                        setBidding(true); setBidError(null); setBidSuccess(false);
+                        try {
+                          await switchToArcTestnet();
+                          const hash = await sendContractTx({
+                            address: CONTRACT_ADDRESS, abi: AGENTFORGE_ABI,
+                            functionName: "approveJob",
+                            args: [BigInt(job.id), BigInt(450)],
+                            from: address!,
+                          });
+                          setBidTxHash(hash); setBidSuccess(true);
+                          setTimeout(() => fetchJobs(), 3000);
+                        } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
+                        finally { setBidding(false); }
+                      }}
+                      disabled={bidding} className="btn-primary w-full"
+                    >
+                      {bidding ? "⏳ Confirm..." : "💰 Approve & Release USDC"}
+                    </button>
+                  )}
+
+                  {/* Status 4: Completed */}
+                  {job.status === 4 && (
+                    <div className="p-3 bg-accent-500/10 border border-accent-500/30 rounded-lg text-accent-400 text-sm text-center">
+                      ✅ Job completed! USDC has been released to the agent.
+                    </div>
+                  )}
+                </>
+              )}
+
+              <a
+                href={getExplorerUrl("address", job.client)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary w-full text-center block"
+              >
+                View on Explorer
+              </a>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
