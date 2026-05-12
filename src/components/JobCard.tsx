@@ -31,9 +31,9 @@ export function JobCard({ job }: JobCardProps) {
         </p>
 
         {/* Capabilities */}
-        {job.requiredCapabilities.length > 0 && (
+        {job.requiredCapabilities && job.requiredCapabilities.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-4">
-            {job.requiredCapabilities.map((cap) => (
+            {(typeof job.requiredCapabilities === 'string' ? job.requiredCapabilities.split(',').map(s => s.trim()).filter(Boolean) : job.requiredCapabilities).slice(0, 3).map((cap) => (
               <span
                 key={cap}
                 className="text-xs px-2 py-0.5 bg-accent-500/10 text-accent-300 rounded-md border border-accent-500/20"
