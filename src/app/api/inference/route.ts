@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const SYSTEM_PROMPT = `You are an AI agent on AgentForge, a decentralized marketplace on Arc Network. You are helpful, concise, and professional. You specialize in text generation, code review, data analysis, and blockchain-related tasks. Each response you give costs the user $0.01 USDC via nanopayments on-chain. Keep responses focused and valuable.`;
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { prompt, agentId, depositorAddress } = body;
+    const { prompt, agentId, depositorAddress, history } = body;
 
     if (!prompt || !depositorAddress) {
       return NextResponse.json(
@@ -12,24 +16,56 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // In production, this would:
-    // 1. Verify depositor has sufficient inference pool balance
-    // 2. Call AgentForge.chargeInference(depositor, agent, amount)
-    // 3. Forward prompt to the AI agent's API
-    // 4. Return response + transaction receipt
-
     const costPerInference = 0.01; // USDC
 
-    // Simulate AI response
-    const responses = [
-      "Based on my analysis, the optimal approach involves leveraging distributed computing patterns with fault-tolerant consensus mechanisms. This ensures both scalability and reliability in production environments.",
-      "I've processed your request. The key insight here is that combining on-chain verification with off-chain computation provides the best balance of security and performance for this use case.",
-      "After evaluating multiple approaches, I recommend implementing a layered architecture that separates concerns between data processing, business logic, and presentation. This maximizes maintainability.",
-      "The analysis is complete. Results indicate a strong correlation between the variables you specified. I'd recommend further investigation into the outlier patterns for actionable insights.",
-    ];
+    let response = "";
 
-    const response = responses[Math.floor(Math.random() * responses.length)];
-    const mockTxHash = `0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join("")}`;
+    if (OPENAI_API_KEY) {
+      // Real AI response via OpenAI
+      const messages = [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...(history || []).slice(-6).map((m: any) => ({
+          role: m.role === "agent" ? "assistant" : "user",
+          content: m.content,
+        })),
+        { role: "user", content: prompt },
+      ];
+
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages,
+          max_tokens: 500,
+          temperature: 0.7,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        response = data.choices[0]?.message?.content || "I apologize, I couldn't generate a response.";
+      } else {
+        response = "I'm experiencing connectivity issues. Please try again in a moment.";
+      }
+    } else {
+      // Fallback smart responses
+      const lower = prompt.toLowerCase();
+      if (lower.includes("hello") || lower.includes("hi") || lower.includes("hey")) {
+        response = "Hello! I'm your AI agent on AgentForge. I can help with text generation, code review, data analysis, and blockchain tasks. What would you like me to work on?";
+      } else if (lower.includes("code") || lower.includes("program") || lower.includes("function")) {
+        response = "I'd be happy to help with code. Could you share the specific code or describe what you'd like me to review/write? I can assist with Solidity, TypeScript, Python, and more.";
+      } else if (lower.includes("blockchain") || lower.includes("smart contract") || lower.includes("solidity")) {
+        response = "Great question about blockchain! I specialize in smart contract development on EVM chains. I can help with contract architecture, security patterns, gas optimization, and deployment strategies.";
+      } else if (lower.includes("analyze") || lower.includes("data") || lower.includes("research")) {
+        response = "I can help analyze data and provide insights. Please share the data or describe what you'd like me to research, and I'll provide a structured analysis.";
+      } else {
+        response = `I've processed your request: "${prompt.slice(0, 50)}...". Based on my analysis, I can provide detailed assistance on this topic. Would you like me to elaborate on any specific aspect, or shall I provide a comprehensive overview?`;
+      }
+    }
 
     return NextResponse.json({
       success: true,
@@ -38,19 +74,8 @@ export async function POST(request: NextRequest) {
         agentId: agentId || 1,
         cost: costPerInference,
         currency: "USDC",
-        model: "gpt-forge-alpha-v1",
-        tokensUsed: Math.floor(Math.random() * 500) + 100,
-      },
-      transaction: {
-        hash: mockTxHash,
-        explorer: `https://testnet.arcscan.app/tx/${mockTxHash}`,
-        type: "nanopayment",
-      },
-      pool: {
-        depositor: depositorAddress,
-        remainingBalance: (Math.random() * 10).toFixed(4),
-        totalSpent: (Math.random() * 5).toFixed(4),
-        callCount: Math.floor(Math.random() * 100) + 1,
+        model: OPENAI_API_KEY ? "gpt-4o-mini" : "agentforge-local",
+        tokensUsed: Math.floor(response.length / 4),
       },
     });
   } catch (error) {

@@ -610,28 +610,38 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
 
     const userMessage = input.trim();
     setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+    const newMessages = [...messages, { role: "user" as const, content: userMessage }];
+    setMessages(newMessages);
     setIsTyping(true);
 
-    // Simulate AI response with delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const res = await fetch("/api/inference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: userMessage,
+          agentId: selectedAgent?.id || 1,
+          depositorAddress: address,
+          history: newMessages.slice(-6),
+        }),
+      });
 
-    const responses = [
-      "I've analyzed your request. Based on my capabilities, I can help you with that. The task involves processing the data and generating a comprehensive output.",
-      "Great question! Let me break this down for you. The key aspects to consider are the data structure, processing pipeline, and output format.",
-      "I've completed the analysis. Here's what I found: the optimal approach involves a multi-step process that maximizes efficiency while maintaining accuracy.",
-      "Processing complete. The results show interesting patterns that could be leveraged for better outcomes. Would you like me to elaborate on any specific aspect?",
-    ];
+      const data = await res.json();
+      const cost = data.inference?.cost || 0.01;
+      setTotalCost((prev) => prev + cost);
 
-    const response = responses[Math.floor(Math.random() * responses.length)];
-    const cost = 0.01;
-    setTotalCost((prev) => prev + cost);
-
-    setMessages((prev) => [
-      ...prev,
-      { role: "agent", content: response, cost: `$${cost.toFixed(4)}` },
-    ]);
-    setIsTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        { role: "agent", content: data.response || "Error processing request.", cost: `$${cost.toFixed(4)}` },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "agent", content: "Connection error. Please try again.", cost: "$0.00" },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   return (
