@@ -5,10 +5,11 @@ import { formatUSDC, shortenAddress, getExplorerUrl, timeAgo, timeRemaining } fr
 import { JOB_STATUS_MAP, JOB_STATUS_COLORS, cn } from "@/lib/utils";
 import { useEffect } from "react";
 import Link from "next/link";
-import { use } from "react";
+import { useParams } from "next/navigation";
 
-export default function JobDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function JobDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const { jobs, fetchJobs } = useJobs();
   const { agents, fetchAgents } = useAgents();
 

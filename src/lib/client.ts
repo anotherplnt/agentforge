@@ -11,10 +11,13 @@ export const arcTestnet = {
   testnet: true,
 } as const;
 
-// Public client for reading contract state
+// Public client for reading contract state (short timeout for Vercel)
 export const publicClient = createPublicClient({
   chain: arcTestnet,
-  transport: http("https://rpc.testnet.arc.network"),
+  transport: http("https://rpc.testnet.arc.network", {
+    timeout: 8000,
+    retryCount: 1,
+  }),
 });
 
 // Wallet client factory (browser) — returns null if no wallet

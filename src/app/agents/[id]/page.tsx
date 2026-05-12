@@ -5,10 +5,11 @@ import { formatUSDC, shortenAddress, getExplorerUrl } from "@/lib/config";
 import { AGENT_STATUS_MAP } from "@/lib/utils";
 import { useEffect } from "react";
 import Link from "next/link";
-import { use } from "react";
+import { useParams } from "next/navigation";
 
-export default function AgentDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+export default function AgentDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
   const { agents, fetchAgents } = useAgents();
 
   useEffect(() => {
