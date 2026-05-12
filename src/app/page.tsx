@@ -354,7 +354,7 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
-            <Link href="/inference" className="btn-primary px-6 py-3">
+            <Link href="/dashboard?tab=inference" className="btn-primary px-6 py-3">
               Try Inference →
             </Link>
           </div>

@@ -675,6 +675,31 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
             >
               {depositing ? "⏳..." : "Deposit USDC"}
             </button>
+            <button
+              onClick={async () => {
+                setDepositing(true);
+                try {
+                  await switchToArcTestnet();
+                  const hash = await sendContractTx({
+                    address: CONTRACT_ADDRESS,
+                    abi: AGENTFORGE_ABI,
+                    functionName: "withdrawInferencePool",
+                    args: [],
+                    from: address,
+                  });
+                  setDepositTxHash(hash);
+                  try { await publicClient.waitForTransactionReceipt({ hash: hash as `0x${string}`, timeout: 30000 }); } catch {}
+                } catch (err: any) {
+                  console.error("Withdraw failed:", err);
+                } finally {
+                  setDepositing(false);
+                }
+              }}
+              disabled={depositing || poolBalance === "$0.00"}
+              className="btn-secondary text-sm px-4 py-2"
+            >
+              Withdraw
+            </button>
           </div>
         </div>
         {depositTxHash && (
@@ -684,11 +709,23 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
             rel="noopener noreferrer"
             className="text-xs text-primary-400 underline"
           >
-            View deposit tx on ArcScan →
+            View tx on ArcScan →
           </a>
         )}
       </div>
 
+      {/* Must deposit to chat */}
+      {poolBalance === "$0.00" ? (
+        <div className="glass-card p-12 text-center">
+          <p className="text-4xl mb-4">💰</p>
+          <h3 className="text-xl font-semibold text-dark-100 mb-2">Deposit Required</h3>
+          <p className="text-dark-400 mb-4">
+            You need to deposit USDC to your inference pool before chatting with an agent. Each message costs $0.01 USDC.
+          </p>
+          <p className="text-sm text-dark-500">Use the deposit field above to fund your pool.</p>
+        </div>
+      ) : (
+      <>
       <div className="glass-card overflow-hidden">
         {/* Chat Header */}
         <div className="p-4 border-b border-dark-700 flex items-center justify-between">
@@ -770,6 +807,8 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
           Deposit USDC above to fund your pool. Unused balance can be withdrawn anytime.
         </p>
       </div>
+      </>
+      )}
     </div>
   );
 }
