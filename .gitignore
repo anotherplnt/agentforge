@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env.production
+*.log
+coverage/
+artifacts/
+cache/
+typechain-types/
