@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWalletStore } from "@/hooks/useWallet";
-import { useAgents, useJobs } from "@/hooks/useContract";
+import { useAgents, useJobs, useStats } from "@/hooks/useContract";
 import { formatUSDC, shortenAddress } from "@/lib/config";
+import { CONTRACTS, getExplorerUrl, parseUSDC } from "@/lib/config";
 import { JOB_STATUS_MAP, JOB_STATUS_COLORS, cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { getWalletClient, publicClient, switchToArcTestnet } from "@/lib/client";
+import { AGENTFORGE_ABI } from "@/lib/abi";
+
+const CONTRACT_ADDRESS = CONTRACTS.agentForge as `0x${string}`;
 
 type Tab = "overview" | "create-job" | "register-agent" | "inference";
 
@@ -13,12 +17,14 @@ export default function DashboardPage() {
   const { address, isConnected, connect } = useWalletStore();
   const { agents, fetchAgents } = useAgents();
   const { jobs, fetchJobs } = useJobs();
+  const { stats, fetchStats } = useStats();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   useEffect(() => {
     fetchAgents();
     fetchJobs();
-  }, [fetchAgents, fetchJobs]);
+    fetchStats();
+  }, [fetchAgents, fetchJobs, fetchStats]);
 
   if (!isConnected) {
     return (
@@ -37,8 +43,8 @@ export default function DashboardPage() {
     );
   }
 
-  const myJobs = jobs.filter((j) => j.client === address);
-  const myAgent = agents.find((a) => a.owner === address);
+  const myJobs = jobs.filter((j) => j.client?.toLowerCase() === address?.toLowerCase());
+  const myAgent = agents.find((a) => a.owner?.toLowerCase() === address?.toLowerCase());
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -77,14 +83,14 @@ export default function DashboardPage() {
       {activeTab === "overview" && (
         <OverviewTab myJobs={myJobs} myAgent={myAgent} address={address!} />
       )}
-      {activeTab === "create-job" && <CreateJobTab />}
-      {activeTab === "register-agent" && <RegisterAgentTab myAgent={myAgent} />}
-      {activeTab === "inference" && <InferenceTab agents={agents} />}
+      {activeTab === "create-job" && <CreateJobTab address={address!} onSuccess={() => { fetchJobs(); fetchStats(); }} />}
+      {activeTab === "register-agent" && <RegisterAgentTab myAgent={myAgent} address={address!} onSuccess={fetchAgents} />}
+      {activeTab === "inference" && <InferenceTab agents={agents} address={address!} />}
     </div>
   );
 }
 
-function OverviewTab({ myJobs, myAgent, address }: { myJobs: typeof import("@/lib/mock-data").MOCK_JOBS; myAgent: typeof import("@/lib/mock-data").MOCK_AGENTS[0] | undefined; address: string }) {
+function OverviewTab({ myJobs, myAgent, address }: { myJobs: any[]; myAgent: any; address: string }) {
   return (
     <div className="space-y-8">
       {/* Quick Stats */}
@@ -148,10 +154,10 @@ function OverviewTab({ myJobs, myAgent, address }: { myJobs: typeof import("@/li
           <div className="glass-card p-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center text-2xl border border-primary-500/20">
-                {myAgent.avatar || "🤖"}
+                🤖
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-dark-100">{myAgent.name || `Agent #${myAgent.id}`}</p>
+                <p className="font-semibold text-dark-100">Agent #{myAgent.id}</p>
                 <p className="text-sm text-dark-400">
                   ⭐ {(myAgent.reputationScore / 100).toFixed(2)} · {myAgent.totalJobs} jobs · {formatUSDC(myAgent.totalEarnings)} earned
                 </p>
@@ -164,7 +170,7 @@ function OverviewTab({ myJobs, myAgent, address }: { myJobs: typeof import("@/li
   );
 }
 
-function CreateJobTab() {
+function CreateJobTab({ address, onSuccess }: { address: string; onSuccess: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [budget, setBudget] = useState("");
@@ -172,23 +178,53 @@ function CreateJobTab() {
   const [capabilities, setCapabilities] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setError(null);
+    setSuccess(false);
+    setTxHash(null);
 
-    // Simulate transaction
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      await switchToArcTestnet();
+      const walletClient = getWalletClient();
+      if (!walletClient) {
+        throw new Error("Wallet not connected");
+      }
 
-    setSuccess(true);
-    setSubmitting(false);
-    setTitle("");
-    setDescription("");
-    setBudget("");
-    setDeadline("");
-    setCapabilities("");
+      const deadlineTimestamp = BigInt(Math.floor(new Date(deadline).getTime() / 1000));
+      const budgetWei = parseUSDC(budget);
 
-    setTimeout(() => setSuccess(false), 5000);
+      const hash = await walletClient.writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: AGENTFORGE_ABI,
+        functionName: "createJob",
+        args: [title, description, capabilities, deadlineTimestamp],
+        value: budgetWei,
+        account: address as `0x${string}`,
+      });
+
+      setTxHash(hash);
+
+      // Wait for confirmation
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      setSuccess(true);
+      setTitle("");
+      setDescription("");
+      setBudget("");
+      setDeadline("");
+      setCapabilities("");
+      onSuccess();
+    } catch (err: any) {
+      console.error("Create job failed:", err);
+      setError(err?.shortMessage || err?.message || "Transaction failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -199,6 +235,22 @@ function CreateJobTab() {
         {success && (
           <div className="mb-6 p-4 bg-accent-500/10 border border-accent-500/30 rounded-lg text-accent-400 text-sm">
             ✅ Job created successfully! USDC has been escrowed.
+            {txHash && (
+              <a
+                href={getExplorerUrl("tx", txHash)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mt-2 text-primary-400 underline text-xs"
+              >
+                View transaction on ArcScan →
+              </a>
+            )}
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            ❌ {error}
           </div>
         )}
 
@@ -282,7 +334,7 @@ function CreateJobTab() {
             disabled={submitting}
             className="btn-primary w-full"
           >
-            {submitting ? "Creating Job & Escrowing USDC..." : "Create Job & Escrow USDC"}
+            {submitting ? "⏳ Confirm in Wallet..." : "Create Job & Escrow USDC"}
           </button>
         </form>
       </div>
@@ -290,7 +342,7 @@ function CreateJobTab() {
   );
 }
 
-function RegisterAgentTab({ myAgent }: { myAgent: typeof import("@/lib/mock-data").MOCK_AGENTS[0] | undefined }) {
+function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; address: string; onSuccess: () => void }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [capabilities, setCapabilities] = useState("");
@@ -298,14 +350,16 @@ function RegisterAgentTab({ myAgent }: { myAgent: typeof import("@/lib/mock-data
   const [pricePerInference, setPricePerInference] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   if (myAgent) {
     return (
       <div className="max-w-2xl">
         <div className="glass-card p-8 text-center">
-          <p className="text-4xl mb-4">{myAgent.avatar || "🤖"}</p>
+          <p className="text-4xl mb-4">🤖</p>
           <h3 className="text-xl font-semibold text-dark-100 mb-2">
-            {myAgent.name || `Agent #${myAgent.id}`}
+            Agent #{myAgent.id}
           </h3>
           <p className="text-dark-400 mb-4">Your agent is already registered and active.</p>
           <div className="text-sm text-dark-300">
@@ -321,10 +375,48 @@ function RegisterAgentTab({ myAgent }: { myAgent: typeof import("@/lib/mock-data
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setSuccess(true);
-    setSubmitting(false);
-    setTimeout(() => setSuccess(false), 5000);
+    setError(null);
+    setSuccess(false);
+    setTxHash(null);
+
+    try {
+      await switchToArcTestnet();
+      const walletClient = getWalletClient();
+      if (!walletClient) {
+        throw new Error("Wallet not connected");
+      }
+
+      // metadataURI = JSON with name + description
+      const metadataURI = `data:application/json,${encodeURIComponent(JSON.stringify({ name, description }))}`;
+      const priceTaskWei = parseUSDC(pricePerTask);
+      const priceInferenceWei = parseUSDC(pricePerInference);
+
+      const hash = await walletClient.writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: AGENTFORGE_ABI,
+        functionName: "registerAgent",
+        args: [metadataURI, capabilities, priceTaskWei, priceInferenceWei],
+        account: address as `0x${string}`,
+      });
+
+      setTxHash(hash);
+
+      // Wait for confirmation
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      setSuccess(true);
+      setName("");
+      setDescription("");
+      setCapabilities("");
+      setPricePerTask("");
+      setPricePerInference("");
+      onSuccess();
+    } catch (err: any) {
+      console.error("Register agent failed:", err);
+      setError(err?.shortMessage || err?.message || "Transaction failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -335,6 +427,22 @@ function RegisterAgentTab({ myAgent }: { myAgent: typeof import("@/lib/mock-data
         {success && (
           <div className="mb-6 p-4 bg-accent-500/10 border border-accent-500/30 rounded-lg text-accent-400 text-sm">
             ✅ Agent registered successfully on-chain!
+            {txHash && (
+              <a
+                href={getExplorerUrl("tx", txHash)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mt-2 text-primary-400 underline text-xs"
+              >
+                View transaction on ArcScan →
+              </a>
+            )}
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            ❌ {error}
           </div>
         )}
 
@@ -421,7 +529,7 @@ function RegisterAgentTab({ myAgent }: { myAgent: typeof import("@/lib/mock-data
             disabled={submitting}
             className="btn-primary w-full"
           >
-            {submitting ? "Registering Agent On-Chain..." : "Register Agent"}
+            {submitting ? "⏳ Confirm in Wallet..." : "Register Agent On-Chain"}
           </button>
         </form>
       </div>
@@ -429,15 +537,68 @@ function RegisterAgentTab({ myAgent }: { myAgent: typeof import("@/lib/mock-data
   );
 }
 
-function InferenceTab({ agents }: { agents: typeof import("@/lib/mock-data").MOCK_AGENTS }) {
+function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   const [messages, setMessages] = useState<{ role: "user" | "agent"; content: string; cost?: string }[]>([
-    { role: "agent", content: "Hello! I'm GPT-Forge Alpha. Each message costs $0.01 USDC. How can I help you today?" },
+    { role: "agent", content: "Hello! I'm an AI Agent on AgentForge. Each message costs $0.01 USDC via nanopayments. How can I help you today?" },
   ]);
   const [input, setInput] = useState("");
   const [totalCost, setTotalCost] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
+  const [poolBalance, setPoolBalance] = useState<string>("0");
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositing, setDepositing] = useState(false);
+  const [depositTxHash, setDepositTxHash] = useState<string | null>(null);
 
   const selectedAgent = agents[0];
+
+  // Fetch inference pool balance
+  useEffect(() => {
+    async function fetchPool() {
+      try {
+        const result = await publicClient.readContract({
+          address: CONTRACT_ADDRESS,
+          abi: AGENTFORGE_ABI,
+          functionName: "getInferencePool",
+          args: [address as `0x${string}`],
+        });
+        const pool = result as { balance: bigint };
+        setPoolBalance(formatUSDC(pool.balance));
+      } catch {
+        setPoolBalance("$0.00");
+      }
+    }
+    fetchPool();
+  }, [address, depositing]);
+
+  const handleDeposit = async () => {
+    if (!depositAmount) return;
+    setDepositing(true);
+    setDepositTxHash(null);
+
+    try {
+      await switchToArcTestnet();
+      const walletClient = getWalletClient();
+      if (!walletClient) throw new Error("Wallet not connected");
+
+      const amountWei = parseUSDC(depositAmount);
+      const hash = await walletClient.writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: AGENTFORGE_ABI,
+        functionName: "depositInferencePool",
+        args: [],
+        value: amountWei,
+        account: address as `0x${string}`,
+      });
+
+      setDepositTxHash(hash);
+      await publicClient.waitForTransactionReceipt({ hash });
+      setDepositAmount("");
+    } catch (err: any) {
+      console.error("Deposit failed:", err);
+    } finally {
+      setDepositing(false);
+    }
+  };
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -471,24 +632,60 @@ function InferenceTab({ agents }: { agents: typeof import("@/lib/mock-data").MOC
 
   return (
     <div className="max-w-3xl">
+      {/* Deposit Pool */}
+      <div className="glass-card p-4 mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-sm text-dark-400">Inference Pool Balance</p>
+            <p className="text-lg font-bold text-accent-400">{poolBalance}</p>
+          </div>
+          <div className="flex gap-2 items-center">
+            <input
+              type="number"
+              step="0.1"
+              value={depositAmount}
+              onChange={(e) => setDepositAmount(e.target.value)}
+              placeholder="1.00"
+              className="input-field w-24 text-sm"
+              aria-label="Deposit amount"
+            />
+            <button
+              onClick={handleDeposit}
+              disabled={depositing || !depositAmount}
+              className="btn-primary text-sm px-4 py-2"
+            >
+              {depositing ? "⏳..." : "Deposit USDC"}
+            </button>
+          </div>
+        </div>
+        {depositTxHash && (
+          <a
+            href={getExplorerUrl("tx", depositTxHash)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-primary-400 underline"
+          >
+            View deposit tx on ArcScan →
+          </a>
+        )}
+      </div>
+
       <div className="glass-card overflow-hidden">
         {/* Chat Header */}
         <div className="p-4 border-b border-dark-700 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center text-xl border border-primary-500/20">
-              {selectedAgent?.avatar || "🤖"}
+              🤖
             </div>
             <div>
               <p className="font-semibold text-dark-100 text-sm">
                 {selectedAgent?.name || "AI Agent"}
               </p>
-              <p className="text-xs text-accent-400">
-                ${(selectedAgent?.pricePerInference ? Number(selectedAgent.pricePerInference) / 1e18 : 0.01).toFixed(4)} per message
-              </p>
+              <p className="text-xs text-accent-400">$0.01 per message</p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs text-dark-400">Total Spent</p>
+            <p className="text-xs text-dark-400">Session Spent</p>
             <p className="text-sm font-bold text-accent-400">${totalCost.toFixed(4)} USDC</p>
           </div>
         </div>
@@ -550,8 +747,8 @@ function InferenceTab({ agents }: { agents: typeof import("@/lib/mock-data").MOC
       {/* Info */}
       <div className="mt-4 glass-card p-4">
         <p className="text-xs text-dark-400">
-          💡 This demo simulates pay-per-inference nanopayments. In production, each message triggers
-          an on-chain USDC deduction from your inference pool via the AgentForge smart contract.
+          💡 Each message triggers a nanopayment from your inference pool via the AgentForge smart contract.
+          Deposit USDC above to fund your pool. Unused balance can be withdrawn anytime.
         </p>
       </div>
     </div>
