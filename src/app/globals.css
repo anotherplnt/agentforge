@@ -10,6 +10,11 @@
 
   body {
     @apply bg-dark-950 text-dark-50;
+    background-image: url('/bg-hero.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 }
 
