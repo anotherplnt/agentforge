@@ -223,11 +223,28 @@ export default function JobDetailPage() {
                             setBidding(true); setBidError(null); setBidSuccess(false);
                             try {
                               await switchToArcTestnet();
-                              // Assign first bidder (in real app, client would choose)
+                              // Get first bidder address from contract
+                              const { createPublicClient, http } = await import("viem");
+                              const client = createPublicClient({
+                                chain: { id: 5042002, name: "Arc", nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 }, rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } } },
+                                transport: http("https://rpc.testnet.arc.network", { timeout: 10000 }),
+                              });
+                              const bids = await client.readContract({
+                                address: CONTRACT_ADDRESS,
+                                abi: AGENTFORGE_ABI,
+                                functionName: "getJobBids",
+                                args: [BigInt(job.id)],
+                              }) as any[];
+                              if (!bids || bids.length === 0) {
+                                setBidError("No bids found");
+                                setBidding(false);
+                                return;
+                              }
+                              const agentAddress = bids[0].agent || bids[0][1];
                               const hash = await sendContractTx({
                                 address: CONTRACT_ADDRESS, abi: AGENTFORGE_ABI,
                                 functionName: "assignJob",
-                                args: [BigInt(job.id), BigInt(0)],
+                                args: [BigInt(job.id), agentAddress],
                                 from: address!,
                               });
                               setBidTxHash(hash); setBidSuccess(true);
