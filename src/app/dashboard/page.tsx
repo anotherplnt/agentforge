@@ -6,7 +6,7 @@ import { useAgents, useJobs, useStats } from "@/hooks/useContract";
 import { formatUSDC, shortenAddress } from "@/lib/config";
 import { CONTRACTS, getExplorerUrl, parseUSDC } from "@/lib/config";
 import { JOB_STATUS_MAP, JOB_STATUS_COLORS, cn } from "@/lib/utils";
-import { getWalletClient, publicClient, switchToArcTestnet } from "@/lib/client";
+import { sendContractTx, publicClient, switchToArcTestnet } from "@/lib/client";
 import { AGENTFORGE_ABI } from "@/lib/abi";
 
 const CONTRACT_ADDRESS = CONTRACTS.agentForge as `0x${string}`;
@@ -190,21 +190,17 @@ function CreateJobTab({ address, onSuccess }: { address: string; onSuccess: () =
 
     try {
       await switchToArcTestnet();
-      const walletClient = getWalletClient();
-      if (!walletClient) {
-        throw new Error("Wallet not connected");
-      }
 
       const deadlineTimestamp = BigInt(Math.floor(new Date(deadline).getTime() / 1000));
       const budgetWei = parseUSDC(budget);
 
-      const hash = await walletClient.writeContract({
+      const hash = await sendContractTx({
         address: CONTRACT_ADDRESS,
         abi: AGENTFORGE_ABI,
         functionName: "createJob",
         args: [title, description, capabilities, deadlineTimestamp],
         value: budgetWei,
-        account: address as `0x${string}`,
+        from: address,
       });
 
       setTxHash(hash);
@@ -217,7 +213,7 @@ function CreateJobTab({ address, onSuccess }: { address: string; onSuccess: () =
 
       // Wait for confirmation in background
       try {
-        await publicClient.waitForTransactionReceipt({ hash, timeout: 30000 });
+        await publicClient.waitForTransactionReceipt({ hash: hash as `0x${string}`, timeout: 30000 });
       } catch {}
       onSuccess();
     } catch (err: any) {
@@ -382,22 +378,18 @@ function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; addre
 
     try {
       await switchToArcTestnet();
-      const walletClient = getWalletClient();
-      if (!walletClient) {
-        throw new Error("Wallet not connected");
-      }
 
       // metadataURI = JSON with name + description
       const metadataURI = `data:application/json,${encodeURIComponent(JSON.stringify({ name, description }))}`;
       const priceTaskWei = parseUSDC(pricePerTask);
       const priceInferenceWei = parseUSDC(pricePerInference);
 
-      const hash = await walletClient.writeContract({
+      const hash = await sendContractTx({
         address: CONTRACT_ADDRESS,
         abi: AGENTFORGE_ABI,
         functionName: "registerAgent",
         args: [metadataURI, capabilities, priceTaskWei, priceInferenceWei],
-        account: address as `0x${string}`,
+        from: address,
       });
 
       setTxHash(hash);
@@ -410,7 +402,7 @@ function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; addre
 
       // Wait for confirmation in background
       try {
-        await publicClient.waitForTransactionReceipt({ hash, timeout: 30000 });
+        await publicClient.waitForTransactionReceipt({ hash: hash as `0x${string}`, timeout: 30000 });
       } catch {}
       onSuccess();
     } catch (err: any) {
@@ -579,22 +571,23 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
 
     try {
       await switchToArcTestnet();
-      const walletClient = getWalletClient();
-      if (!walletClient) throw new Error("Wallet not connected");
 
       const amountWei = parseUSDC(depositAmount);
-      const hash = await walletClient.writeContract({
+      const hash = await sendContractTx({
         address: CONTRACT_ADDRESS,
         abi: AGENTFORGE_ABI,
         functionName: "depositInferencePool",
         args: [],
         value: amountWei,
-        account: address as `0x${string}`,
+        from: address,
       });
 
       setDepositTxHash(hash);
-      await publicClient.waitForTransactionReceipt({ hash });
       setDepositAmount("");
+
+      try {
+        await publicClient.waitForTransactionReceipt({ hash: hash as `0x${string}`, timeout: 30000 });
+      } catch {}
     } catch (err: any) {
       console.error("Deposit failed:", err);
     } finally {

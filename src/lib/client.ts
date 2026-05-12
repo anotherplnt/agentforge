@@ -1,4 +1,4 @@
-import { createPublicClient, createWalletClient, http, custom } from "viem";
+import { createPublicClient, createWalletClient, http, custom, encodeFunctionData } from "viem";
 import { ARC_TESTNET } from "./config";
 
 // Define Arc testnet chain for viem
@@ -17,7 +17,7 @@ export const publicClient = createPublicClient({
   transport: http("https://rpc.testnet.arc.network"),
 });
 
-// Wallet client factory (browser)
+// Wallet client factory (browser) — returns null if no wallet
 export function getWalletClient() {
   if (typeof window === "undefined" || !window.ethereum) {
     return null;
@@ -26,6 +26,50 @@ export function getWalletClient() {
     chain: arcTestnet,
     transport: custom(window.ethereum),
   });
+}
+
+// Send a contract write transaction via MetaMask directly
+// This is more reliable than viem's writeContract with custom transport
+export async function sendContractTx({
+  address,
+  abi,
+  functionName,
+  args,
+  value,
+  from,
+}: {
+  address: string;
+  abi: any;
+  functionName: string;
+  args: any[];
+  value?: bigint;
+  from: string;
+}): Promise<string> {
+  if (typeof window === "undefined" || !window.ethereum) {
+    throw new Error("No wallet found");
+  }
+
+  // Encode function data using viem
+  const data = encodeFunctionData({ abi, functionName, args });
+
+  // Build transaction
+  const tx: Record<string, string> = {
+    from,
+    to: address,
+    data,
+  };
+
+  if (value && value > 0n) {
+    tx.value = "0x" + value.toString(16);
+  }
+
+  // Send via MetaMask eth_sendTransaction
+  const hash = (await window.ethereum.request({
+    method: "eth_sendTransaction",
+    params: [tx],
+  })) as string;
+
+  return hash;
 }
 
 // Add Arc testnet to MetaMask
