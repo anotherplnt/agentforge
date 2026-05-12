@@ -16,8 +16,9 @@ export default function HomePage() {
     <div className="relative">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        {/* Background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-950/50 via-dark-950 to-dark-950" />
+        {/* Background image */}
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/bg-hero.jpg')" }} />
+        <div className="absolute inset-0 bg-dark-950/70" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary-500/5 rounded-full blur-3xl" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
