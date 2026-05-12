@@ -299,7 +299,7 @@ export default function JobDetailPage() {
                           const hash = await sendContractTx({
                             address: CONTRACT_ADDRESS, abi: AGENTFORGE_ABI,
                             functionName: "approveJob",
-                            args: [BigInt(job.id), BigInt(450)],
+                            args: [BigInt(job.id)],
                             from: address!,
                           });
                           setBidTxHash(hash); setBidSuccess(true);
