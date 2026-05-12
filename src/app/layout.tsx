@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WalletAutoConnect } from "@/components/WalletAutoConnect";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "AgentForge — AI Agent Marketplace on Arc Network",
@@ -17,8 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="min-h-screen bg-dark-950 text-dark-50 antialiased">
+    <html lang="en" className={`dark ${inter.variable}`}>
+      <body className={`min-h-screen bg-dark-950 text-dark-50 antialiased ${inter.className}`}>
         <WalletAutoConnect />
         <Navbar />
         <main className="min-h-[calc(100vh-140px)]">{children}</main>
