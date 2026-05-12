@@ -1,17 +1,27 @@
 "use client";
 
 import { useJobs, useAgents } from "@/hooks/useContract";
-import { formatUSDC, shortenAddress, getExplorerUrl, timeAgo, timeRemaining } from "@/lib/config";
+import { formatUSDC, shortenAddress, getExplorerUrl, timeAgo, timeRemaining, parseUSDC, CONTRACTS } from "@/lib/config";
 import { JOB_STATUS_MAP, JOB_STATUS_COLORS, cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useWalletStore } from "@/hooks/useWallet";
+import { sendContractTx, publicClient, switchToArcTestnet } from "@/lib/client";
+import { AGENTFORGE_ABI } from "@/lib/abi";
+
+const CONTRACT_ADDRESS = CONTRACTS.agentForge as `0x${string}`;
 
 export default function JobDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { jobs, fetchJobs } = useJobs();
   const { agents, fetchAgents } = useAgents();
+  const { address, isConnected, connect } = useWalletStore();
+  const [bidding, setBidding] = useState(false);
+  const [bidSuccess, setBidSuccess] = useState(false);
+  const [bidTxHash, setBidTxHash] = useState<string | null>(null);
+  const [bidError, setBidError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchJobs();
@@ -153,9 +163,64 @@ export default function JobDetailPage() {
           {job.status === 0 && (
             <div className="glass-card p-6">
               <h3 className="text-lg font-semibold text-dark-100 mb-4">Actions</h3>
+
+              {bidSuccess && (
+                <div className="mb-4 p-3 bg-accent-500/10 border border-accent-500/30 rounded-lg text-accent-400 text-sm">
+                  ✅ Bid placed successfully!
+                  {bidTxHash && (
+                    <a href={getExplorerUrl("tx", bidTxHash)} target="_blank" rel="noopener noreferrer" className="block mt-1 text-primary-400 underline text-xs">
+                      View on ArcScan →
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {bidError && (
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                  ❌ {bidError}
+                </div>
+              )}
+
               <div className="space-y-3">
-                <button className="btn-primary w-full">Place a Bid</button>
-                <button className="btn-secondary w-full">Contact Client</button>
+                {!isConnected ? (
+                  <button onClick={connect} className="btn-primary w-full">Connect Wallet to Bid</button>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      setBidding(true);
+                      setBidError(null);
+                      setBidSuccess(false);
+                      try {
+                        await switchToArcTestnet();
+                        const hash = await sendContractTx({
+                          address: CONTRACT_ADDRESS,
+                          abi: AGENTFORGE_ABI,
+                          functionName: "bidOnJob",
+                          args: [BigInt(job.id), BigInt(job.budget), "I can complete this task efficiently.", BigInt(86400)],
+                          from: address!,
+                        });
+                        setBidTxHash(hash);
+                        setBidSuccess(true);
+                      } catch (err: any) {
+                        setBidError(err?.shortMessage || err?.message || "Transaction failed");
+                      } finally {
+                        setBidding(false);
+                      }
+                    }}
+                    disabled={bidding}
+                    className="btn-primary w-full"
+                  >
+                    {bidding ? "⏳ Confirm in Wallet..." : "Place a Bid"}
+                  </button>
+                )}
+                <a
+                  href={getExplorerUrl("address", job.client)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary w-full text-center block"
+                >
+                  View Client on Explorer
+                </a>
               </div>
             </div>
           )}
