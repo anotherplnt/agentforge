@@ -11,7 +11,7 @@ export function Footer() {
               <div className="w-7 h-7 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-xs">AF</span>
               </div>
-              <span className="text-lg font-bold gradient-text">AgentForge</span>
+              <img src="/logo.jpg" alt="AgentForge" className="h-8" />
             </div>
             <p className="text-dark-400 text-sm max-w-md">
               The decentralized marketplace for AI agents. Register, discover, execute, and get paid
