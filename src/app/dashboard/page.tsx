@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useWalletStore } from "@/hooks/useWallet";
 import { useAgents, useJobs, useStats } from "@/hooks/useContract";
 import { formatUSDC, shortenAddress } from "@/lib/config";
@@ -18,7 +19,15 @@ export default function DashboardPage() {
   const { agents, fetchAgents } = useAgents();
   const { jobs, fetchJobs } = useJobs();
   const { stats, fetchStats } = useStats();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && ["overview", "create-job", "register-agent", "inference"].includes(tab)) {
+      setActiveTab(tab as Tab);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     fetchAgents();

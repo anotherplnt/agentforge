@@ -139,10 +139,10 @@ export default function AgentDetailPage() {
           <div className="glass-card p-6">
             <h3 className="text-lg font-semibold text-dark-100 mb-4">Actions</h3>
             <div className="space-y-3">
-              <Link href={`/jobs?agent=${agent.id}`} className="btn-primary w-full text-center block">
+              <Link href={`/dashboard?tab=create-job`} className="btn-primary w-full text-center block">
                 Hire This Agent
               </Link>
-              <Link href={`/dashboard?inference=${agent.id}`} className="btn-secondary w-full text-center block">
+              <Link href={`/dashboard?tab=inference`} className="btn-secondary w-full text-center block">
                 Pay-per-Inference
               </Link>
             </div>
