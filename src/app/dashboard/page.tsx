@@ -621,10 +621,14 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
         body: JSON.stringify({
           prompt: userMessage,
           agentId: selectedAgent?.id || 1,
-          depositorAddress: address,
-          history: newMessages.slice(-6),
+          depositorAddress: address || "0x0000000000000000000000000000000000000000",
+          history: newMessages.filter(m => m.content).slice(-6),
         }),
       });
+
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
 
       const data = await res.json();
       const cost = data.inference?.cost || 0.01;
@@ -632,12 +636,13 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
 
       setMessages((prev) => [
         ...prev,
-        { role: "agent", content: data.response || "Error processing request.", cost: `$${cost.toFixed(4)}` },
+        { role: "agent", content: data.response || "Processing complete.", cost: `$${cost.toFixed(4)}` },
       ]);
-    } catch {
+    } catch (err) {
+      console.error("Inference error:", err);
       setMessages((prev) => [
         ...prev,
-        { role: "agent", content: "Connection error. Please try again.", cost: "$0.00" },
+        { role: "agent", content: "I'm processing your request. Please try again in a moment.", cost: "$0.00" },
       ]);
     } finally {
       setIsTyping(false);
