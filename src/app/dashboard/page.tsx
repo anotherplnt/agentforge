@@ -810,7 +810,7 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
         </div>
 
         {/* Messages */}
-        <div className="h-[400px] overflow-y-auto p-4 space-y-4">
+        <div className="h-[400px] overflow-y-auto p-4 space-y-4 scroll-smooth" style={{ overscrollBehavior: "contain" }}>
           {messages.map((msg, i) => (
             <div
               key={i}
