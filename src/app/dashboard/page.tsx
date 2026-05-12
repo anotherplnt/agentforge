@@ -556,7 +556,11 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   const [input, setInput] = useState("");
   const [totalCost, setTotalCost] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
-  const [poolBalance, setPoolBalance] = useState<string>("0");
+  const [poolBalance, setPoolBalance] = useState<string>("loading");
+  const [hasDeposited, setHasDeposited] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("agentforge_has_deposited") === "true";
+  });
   const [depositAmount, setDepositAmount] = useState("");
   const [depositing, setDepositing] = useState(false);
   const [depositTxHash, setDepositTxHash] = useState<string | null>(null);
@@ -617,6 +621,9 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
 
       setDepositTxHash(hash);
       setDepositAmount("");
+      setHasDeposited(true);
+      localStorage.setItem("agentforge_has_deposited", "true");
+      setPoolBalance("funded");
 
       try {
         await publicClient.waitForTransactionReceipt({ hash: hash as `0x${string}`, timeout: 30000 });
@@ -769,7 +776,7 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
       </div>
 
       {/* Must deposit to chat */}
-      {(poolBalance === "$0.00" || poolBalance === "0" || poolBalance === "$0.000000") ? (
+      {(!hasDeposited && (poolBalance === "$0.00" || poolBalance === "0" || poolBalance === "$0.000000" || poolBalance === "loading")) ? (
         <div className="glass-card p-12 text-center">
           <p className="text-4xl mb-4">💰</p>
           <h3 className="text-xl font-semibold text-dark-100 mb-2">Deposit Required</h3>
