@@ -680,22 +680,40 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
                 setDepositing(true);
                 try {
                   await switchToArcTestnet();
+                  // Withdraw full balance
+                  const { createPublicClient, http } = await import("viem");
+                  const client = createPublicClient({
+                    chain: { id: 5042002, name: "Arc", nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 }, rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } } },
+                    transport: http("https://rpc.testnet.arc.network", { timeout: 10000 }),
+                  });
+                  const pool = await client.readContract({
+                    address: CONTRACT_ADDRESS,
+                    abi: AGENTFORGE_ABI,
+                    functionName: "getInferencePool",
+                    args: [address as `0x${string}`],
+                  }) as any;
+                  const balance = pool.balance || pool[0] || BigInt(0);
+                  if (balance === BigInt(0)) {
+                    setDepositing(false);
+                    return;
+                  }
                   const hash = await sendContractTx({
                     address: CONTRACT_ADDRESS,
                     abi: AGENTFORGE_ABI,
                     functionName: "withdrawInferencePool",
-                    args: [],
+                    args: [balance.toString()],
                     from: address,
                   });
                   setDepositTxHash(hash);
                   try { await publicClient.waitForTransactionReceipt({ hash: hash as `0x${string}`, timeout: 30000 }); } catch {}
+                  setPoolBalance("$0.00");
                 } catch (err: any) {
                   console.error("Withdraw failed:", err);
                 } finally {
                   setDepositing(false);
                 }
               }}
-              disabled={depositing || poolBalance === "$0.00"}
+              disabled={depositing}
               className="btn-secondary text-sm px-4 py-2"
             >
               Withdraw
