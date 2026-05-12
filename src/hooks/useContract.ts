@@ -8,8 +8,16 @@ import type { AgentData, JobData } from "@/lib/utils";
 const CONTRACT_ADDRESS = CONTRACTS.agentForge as `0x${string}`;
 const USE_MOCK = !CONTRACTS.agentForge || CONTRACTS.agentForge === "0x0000000000000000000000000000000000000000";
 
+// Helper: timeout wrapper for RPC calls
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error("RPC timeout")), ms)),
+  ]);
+}
+
 export function useAgents() {
-  const [agents, setAgents] = useState<AgentData[]>(USE_MOCK ? MOCK_AGENTS : []);
+  const [agents, setAgents] = useState<AgentData[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchAgents = useCallback(async () => {
@@ -20,14 +28,24 @@ export function useAgents() {
 
     setLoading(true);
     try {
-      const nextId = await publicClient.readContract({
-        address: CONTRACT_ADDRESS,
-        abi: AGENTFORGE_ABI,
-        functionName: "nextAgentId",
-      });
+      const nextId = await withTimeout(
+        publicClient.readContract({
+          address: CONTRACT_ADDRESS,
+          abi: AGENTFORGE_ABI,
+          functionName: "nextAgentId",
+        }),
+        10000
+      );
+
+      const numAgents = Number(nextId);
+      if (numAgents <= 1) {
+        setAgents([]);
+        setLoading(false);
+        return;
+      }
 
       const agentPromises = [];
-      for (let i = 1; i < Number(nextId); i++) {
+      for (let i = 1; i < numAgents; i++) {
         agentPromises.push(
           publicClient.readContract({
             address: CONTRACT_ADDRESS,
@@ -38,13 +56,13 @@ export function useAgents() {
         );
       }
 
-      const results = await Promise.all(agentPromises);
+      const results = await withTimeout(Promise.all(agentPromises), 15000);
       const parsed: AgentData[] = results.map((r: unknown) => {
         const agent = r as {
           id: bigint;
           owner: string;
           metadataURI: string;
-          capabilities: string[];
+          capabilities: string;
           pricePerTask: bigint;
           pricePerInference: bigint;
           status: number;
@@ -73,7 +91,8 @@ export function useAgents() {
       setAgents(parsed.filter((a) => a.status === 1));
     } catch (error) {
       console.error("Failed to fetch agents:", error);
-      setAgents(MOCK_AGENTS);
+      // Don't fallback to mock — show empty
+      setAgents([]);
     } finally {
       setLoading(false);
     }
@@ -83,7 +102,7 @@ export function useAgents() {
 }
 
 export function useJobs() {
-  const [jobs, setJobs] = useState<JobData[]>(USE_MOCK ? MOCK_JOBS : []);
+  const [jobs, setJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchJobs = useCallback(async () => {
@@ -94,14 +113,24 @@ export function useJobs() {
 
     setLoading(true);
     try {
-      const nextId = await publicClient.readContract({
-        address: CONTRACT_ADDRESS,
-        abi: AGENTFORGE_ABI,
-        functionName: "nextJobId",
-      });
+      const nextId = await withTimeout(
+        publicClient.readContract({
+          address: CONTRACT_ADDRESS,
+          abi: AGENTFORGE_ABI,
+          functionName: "nextJobId",
+        }),
+        10000
+      );
+
+      const numJobs = Number(nextId);
+      if (numJobs <= 1) {
+        setJobs([]);
+        setLoading(false);
+        return;
+      }
 
       const jobPromises = [];
-      for (let i = 1; i < Number(nextId); i++) {
+      for (let i = 1; i < numJobs; i++) {
         jobPromises.push(
           publicClient.readContract({
             address: CONTRACT_ADDRESS,
@@ -112,7 +141,7 @@ export function useJobs() {
         );
       }
 
-      const results = await Promise.all(jobPromises);
+      const results = await withTimeout(Promise.all(jobPromises), 15000);
       const parsed: JobData[] = results.map((r: unknown) => {
         const job = r as {
           id: bigint;
@@ -120,6 +149,7 @@ export function useJobs() {
           assignedAgent: string;
           title: string;
           description: string;
+          requiredCapabilities: string;
           budget: bigint;
           deadline: bigint;
           status: number;
@@ -134,7 +164,7 @@ export function useJobs() {
           assignedAgent: job.assignedAgent,
           title: job.title,
           description: job.description,
-          requiredCapabilities: [],
+          requiredCapabilities: job.requiredCapabilities || "",
           budget: job.budget,
           deadline: Number(job.deadline),
           status: job.status,
@@ -148,7 +178,7 @@ export function useJobs() {
       setJobs(parsed);
     } catch (error) {
       console.error("Failed to fetch jobs:", error);
-      setJobs(MOCK_JOBS);
+      setJobs([]);
     } finally {
       setLoading(false);
     }
@@ -159,20 +189,26 @@ export function useJobs() {
 
 export function useStats() {
   const [stats, setStats] = useState({
-    totalAgents: 5,
-    totalJobs: 5,
-    totalVolume: BigInt("1853000000000000000000"),
+    totalAgents: 0,
+    totalJobs: 0,
+    totalVolume: BigInt(0),
   });
 
   const fetchStats = useCallback(async () => {
-    if (USE_MOCK) return;
+    if (USE_MOCK) {
+      setStats({ totalAgents: 5, totalJobs: 5, totalVolume: BigInt("1853000000000000000000") });
+      return;
+    }
 
     try {
-      const result = await publicClient.readContract({
-        address: CONTRACT_ADDRESS,
-        abi: AGENTFORGE_ABI,
-        functionName: "getStats",
-      });
+      const result = await withTimeout(
+        publicClient.readContract({
+          address: CONTRACT_ADDRESS,
+          abi: AGENTFORGE_ABI,
+          functionName: "getStats",
+        }),
+        10000
+      );
 
       const [totalAgents, totalJobs, totalVolume] = result as [bigint, bigint, bigint];
       setStats({
