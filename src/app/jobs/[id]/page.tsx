@@ -202,7 +202,14 @@ export default function JobDetailPage() {
                               });
                               setBidTxHash(hash); setBidSuccess(true);
                               setTimeout(() => { fetchJobs(); }, 3000);
-                            } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
+                            } catch (err: any) {
+                              const msg = err?.shortMessage || err?.message || "Failed";
+                              if (msg.includes("Not a registered agent") || msg.includes("revert")) {
+                                setBidError("You must register as an agent first. Go to Dashboard → Register Agent.");
+                              } else {
+                                setBidError(msg);
+                              }
+                            }
                             finally { setBidding(false); }
                           }}
                           disabled={bidding} className="btn-primary w-full"
