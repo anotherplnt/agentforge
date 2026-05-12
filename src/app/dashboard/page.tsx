@@ -557,15 +557,23 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   // Fetch inference pool balance
   useEffect(() => {
     async function fetchPool() {
+      if (typeof window === "undefined") return;
       try {
-        const result = await publicClient.readContract({
+        const { createPublicClient, http } = await import("viem");
+        const client = createPublicClient({
+          chain: { id: 5042002, name: "Arc", nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 }, rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } } },
+          transport: http("https://rpc.testnet.arc.network", { timeout: 8000 }),
+        });
+        const result = await client.readContract({
           address: CONTRACT_ADDRESS,
           abi: AGENTFORGE_ABI,
           functionName: "getInferencePool",
           args: [address as `0x${string}`],
         });
-        const pool = result as { balance: bigint };
-        setPoolBalance(formatUSDC(pool.balance));
+        // Handle both tuple and named struct
+        const balance = (result as any).balance || (result as any)[0] || BigInt(0);
+        const formatted = formatUSDC(balance.toString());
+        setPoolBalance(formatted);
       } catch {
         setPoolBalance("$0.00");
       }
@@ -718,7 +726,7 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
       </div>
 
       {/* Must deposit to chat */}
-      {poolBalance === "$0.00" ? (
+      {(poolBalance === "$0.00" || poolBalance === "0" || poolBalance === "$0.000000") ? (
         <div className="glass-card p-12 text-center">
           <p className="text-4xl mb-4">💰</p>
           <h3 className="text-xl font-semibold text-dark-100 mb-2">Deposit Required</h3>
