@@ -60,11 +60,11 @@ export default function JobDetailPage() {
             <p className="text-dark-300 leading-relaxed mb-6">{job.description}</p>
 
             {/* Required Capabilities */}
-            {job.requiredCapabilities.length > 0 && (
+            {job.requiredCapabilities && job.requiredCapabilities.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-sm font-semibold text-dark-200 mb-2">Required Capabilities</h3>
                 <div className="flex flex-wrap gap-2">
-                  {job.requiredCapabilities.map((cap) => (
+                  {(typeof job.requiredCapabilities === 'string' ? job.requiredCapabilities.split(',').map(s => s.trim()).filter(Boolean) : job.requiredCapabilities).map((cap) => (
                     <span
                       key={cap}
                       className="px-3 py-1 bg-accent-500/10 text-accent-300 rounded-lg border border-accent-500/20 text-sm"
