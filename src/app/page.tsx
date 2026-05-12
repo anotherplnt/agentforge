@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useStats } from "@/hooks/useContract";
 import { formatUSDC } from "@/lib/config";
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 
 // ─── Animation Variants ───────────────────────────────────────────────────────
 
@@ -32,11 +32,21 @@ const scaleIn = {
 
 function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) {
   const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-50px" });
 
   useEffect(() => {
-    if (!inView) return;
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStarted(true); },
+      { threshold: 0.5 }
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!started) return;
     const duration = 2000;
     const steps = 60;
     const increment = value / steps;
@@ -51,7 +61,7 @@ function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: number; p
       }
     }, duration / steps);
     return () => clearInterval(timer);
-  }, [inView, value]);
+  }, [started, value]);
 
   return (
     <span ref={ref}>
@@ -63,19 +73,11 @@ function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: number; p
 // ─── Section Wrapper with Scroll Reveal ───────────────────────────────────────
 
 function RevealSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (inView) controls.start("visible");
-  }, [inView, controls]);
-
   return (
     <motion.section
-      ref={ref}
       initial="hidden"
-      animate={controls}
+      whileInView="visible"
+      viewport={{ once: true, margin: "-100px" }}
       variants={fadeUp}
       className={className}
     >
