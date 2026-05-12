@@ -1,24 +1,27 @@
 import { useState, useCallback, useEffect } from "react";
+import { createPublicClient, http } from "viem";
 import { AGENTFORGE_ABI } from "@/lib/abi";
 import { CONTRACTS } from "@/lib/config";
 import type { AgentData, JobData } from "@/lib/utils";
 
 const CONTRACT_ADDRESS = CONTRACTS.agentForge as `0x${string}`;
 
-// Lazy-load publicClient only in browser to prevent SSR issues
+// Create client only in browser
+let _client: any = null;
 function getPublicClient() {
   if (typeof window === "undefined") return null;
-  // Dynamic import at runtime
-  const { createPublicClient, http } = require("viem");
-  return createPublicClient({
-    chain: {
-      id: 5042002,
-      name: "Arc Testnet",
-      nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
-      rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } },
-    },
-    transport: http("https://rpc.testnet.arc.network", { timeout: 8000, retryCount: 1 }),
-  });
+  if (!_client) {
+    _client = createPublicClient({
+      chain: {
+        id: 5042002,
+        name: "Arc Testnet",
+        nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
+        rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } },
+      },
+      transport: http("https://rpc.testnet.arc.network", { timeout: 8000, retryCount: 1 }),
+    });
+  }
+  return _client;
 }
 
 // Helper: timeout wrapper for RPC calls
