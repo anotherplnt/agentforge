@@ -542,7 +542,7 @@ function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; addre
 
 function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   const [messages, setMessages] = useState<{ role: "user" | "agent"; content: string; cost?: string }[]>([
-    { role: "agent", content: "Hello! I'm an AI Agent on AgentForge. Each message costs $0.01 USDC via nanopayments. How can I help you today?" },
+    { role: "agent", content: "Hello! I'm FOOM, your AI Agent on AgentForge. Each message costs $0.01 USDC via nanopayments. How can I help you today?" },
   ]);
   const [input, setInput] = useState("");
   const [totalCost, setTotalCost] = useState(0);
@@ -552,7 +552,7 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   const [depositing, setDepositing] = useState(false);
   const [depositTxHash, setDepositTxHash] = useState<string | null>(null);
 
-  const selectedAgent = agents[0];
+  const selectedAgent = agents.length > 0 ? agents[0] : { id: 1, name: "FOOM", description: "AI Agent specialized in text generation, code review, and data analysis" };
 
   // Fetch inference pool balance
   useEffect(() => {
