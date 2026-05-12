@@ -201,6 +201,7 @@ export default function JobDetailPage() {
                                 from: address!,
                               });
                               setBidTxHash(hash); setBidSuccess(true);
+                              setTimeout(() => { fetchJobs(); }, 3000);
                             } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
                             finally { setBidding(false); }
                           }}
