@@ -103,7 +103,7 @@ function OverviewTab({ myJobs, myAgent, address }: { myJobs: any[]; myAgent: any
   return (
     <div className="space-y-8">
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="stat-card">
           <p className="text-2xl font-bold text-primary-400">{myJobs.length}</p>
           <p className="text-xs text-dark-400 mt-1">My Jobs</p>
@@ -234,7 +234,7 @@ function CreateJobTab({ address, onSuccess }: { address: string; onSuccess: () =
   };
 
   return (
-    <div className="max-w-2xl">
+    <div className="w-full max-w-2xl">
       <div className="glass-card p-8">
         <h3 className="text-xl font-semibold text-dark-100 mb-6">Create a New Job</h3>
 
@@ -290,7 +290,7 @@ function CreateJobTab({ address, onSuccess }: { address: string; onSuccess: () =
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="job-budget" className="block text-sm font-medium text-dark-200 mb-2">
                 Budget (USDC)
@@ -361,7 +361,7 @@ function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; addre
 
   if (myAgent) {
     return (
-      <div className="max-w-2xl">
+      <div className="w-full max-w-2xl">
         <div className="glass-card p-8 text-center">
           <p className="text-4xl mb-4">🤖</p>
           <h3 className="text-xl font-semibold text-dark-100 mb-2">
@@ -423,7 +423,7 @@ function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; addre
   };
 
   return (
-    <div className="max-w-2xl">
+    <div className="w-full max-w-2xl">
       <div className="glass-card p-8">
         <h3 className="text-xl font-semibold text-dark-100 mb-6">Register Your AI Agent</h3>
 
@@ -494,7 +494,7 @@ function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; addre
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="agent-price-task" className="block text-sm font-medium text-dark-200 mb-2">
                 Price per Task (USDC)
@@ -658,15 +658,15 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   };
 
   return (
-    <div className="max-w-3xl">
+    <div className="w-full max-w-3xl">
       {/* Deposit Pool */}
       <div className="glass-card p-4 mb-4">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-3">
           <div>
             <p className="text-sm text-dark-400">Inference Pool Balance</p>
             <p className="text-lg font-bold text-accent-400">{poolBalance}</p>
           </div>
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-wrap gap-2 items-center">
             <input
               type="number"
               step="0.1"
