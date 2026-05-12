@@ -208,16 +208,17 @@ function CreateJobTab({ address, onSuccess }: { address: string; onSuccess: () =
       });
 
       setTxHash(hash);
-
-      // Wait for confirmation
-      await publicClient.waitForTransactionReceipt({ hash });
-
       setSuccess(true);
       setTitle("");
       setDescription("");
       setBudget("");
       setDeadline("");
       setCapabilities("");
+
+      // Wait for confirmation in background
+      try {
+        await publicClient.waitForTransactionReceipt({ hash, timeout: 30000 });
+      } catch {}
       onSuccess();
     } catch (err: any) {
       console.error("Create job failed:", err);
@@ -400,16 +401,17 @@ function RegisterAgentTab({ myAgent, address, onSuccess }: { myAgent: any; addre
       });
 
       setTxHash(hash);
-
-      // Wait for confirmation
-      await publicClient.waitForTransactionReceipt({ hash });
-
       setSuccess(true);
       setName("");
       setDescription("");
       setCapabilities("");
       setPricePerTask("");
       setPricePerInference("");
+
+      // Wait for confirmation in background
+      try {
+        await publicClient.waitForTransactionReceipt({ hash, timeout: 30000 });
+      } catch {}
       onSuccess();
     } catch (err: any) {
       console.error("Register agent failed:", err);
