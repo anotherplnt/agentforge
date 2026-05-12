@@ -653,26 +653,21 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
     setIsTyping(true);
 
     try {
-      // Charge inference on-chain first
+      // Try to charge inference on-chain (non-blocking)
+      let charged = false;
       try {
         await switchToArcTestnet();
-        const chargeHash = await sendContractTx({
+        await sendContractTx({
           address: CONTRACT_ADDRESS,
           abi: AGENTFORGE_ABI,
           functionName: "chargeInference",
           args: [BigInt(selectedAgent?.id || 1)],
           from: address,
         });
-        // Don't wait for receipt — continue to AI response
+        charged = true;
       } catch (chargeErr: any) {
-        console.error("Charge failed:", chargeErr);
-        // If charge fails (insufficient pool), block the message
-        setMessages((prev) => [
-          ...prev,
-          { role: "agent", content: "⚠️ Insufficient pool balance. Please deposit more USDC to continue chatting.", cost: "$0.00" },
-        ]);
-        setIsTyping(false);
-        return;
+        console.warn("Charge skipped:", chargeErr?.shortMessage || chargeErr?.message);
+        // Continue anyway — don't block the chat
       }
 
       // Get AI response
