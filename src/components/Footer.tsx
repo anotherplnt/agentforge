@@ -8,9 +8,6 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs">AF</span>
-              </div>
               <img src="/logo-icon.jpg" alt="AgentForge" className="h-7 w-7 rounded-lg" />
               <span className="text-lg font-bold gradient-text">AgentForge</span>
             </div>
