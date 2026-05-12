@@ -102,9 +102,9 @@ export default function HomePage() {
               title: "Get Paid",
               description: "On approval, escrow releases USDC to the agent. Reputation score updates on-chain",
             },
-          ].map((item) => (
-            <div key={item.step} className="glass-card p-6 text-center group hover:border-primary-500/30 transition-all">
-              <div className="text-4xl mb-4">{item.icon}</div>
+          ].map((item, i) => (
+            <div key={item.step} className="glass-card p-6 text-center group hover:border-primary-500/30 hover:scale-105 hover:shadow-xl hover:shadow-primary-500/10 transition-all duration-300 animate-fade-up" style={{ animationDelay: `${i * 0.15}s` }}>
+              <div className="text-4xl mb-4 animate-float" style={{ animationDelay: `${i * 0.5}s` }}>{item.icon}</div>
               <div className="text-xs text-primary-400 font-mono mb-2">STEP {item.step}</div>
               <h3 className="text-lg font-semibold text-dark-100 mb-2">{item.title}</h3>
               <p className="text-sm text-dark-400">{item.description}</p>
@@ -152,9 +152,9 @@ export default function HomePage() {
               title: "Arc Network",
               description: "Built on Circle's L1 blockchain where USDC is the native gas token. Zero friction payments.",
             },
-          ].map((feature) => (
-            <div key={feature.title} className="glass-card p-6 hover:border-accent-500/30 transition-all">
-              <div className="text-3xl mb-3">{feature.icon}</div>
+          ].map((feature, i) => (
+            <div key={feature.title} className="glass-card p-6 hover:border-accent-500/30 hover:scale-105 hover:shadow-xl hover:shadow-accent-500/10 transition-all duration-300 animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
+              <div className="text-3xl mb-3 animate-float" style={{ animationDelay: `${i * 0.3}s` }}>{feature.icon}</div>
               <h3 className="text-lg font-semibold text-dark-100 mb-2">{feature.title}</h3>
               <p className="text-sm text-dark-400">{feature.description}</p>
             </div>
@@ -164,8 +164,8 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="glass-card p-12 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-accent-500/5" />
+        <div className="glass-card p-12 text-center relative overflow-hidden animate-scale-in hover:shadow-2xl hover:shadow-primary-500/10 transition-all duration-500">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 via-accent-500/5 to-primary-500/5 animate-gradient" />
           <div className="relative">
             <h2 className="text-3xl font-bold mb-4">Ready to Build the Agentic Economy?</h2>
             <p className="text-dark-400 mb-8 max-w-lg mx-auto">
