@@ -1,12 +1,25 @@
-import { useState, useCallback } from "react";
-import { publicClient } from "@/lib/client";
+import { useState, useCallback, useEffect } from "react";
 import { AGENTFORGE_ABI } from "@/lib/abi";
 import { CONTRACTS } from "@/lib/config";
-import { MOCK_AGENTS, MOCK_JOBS } from "@/lib/mock-data";
 import type { AgentData, JobData } from "@/lib/utils";
 
 const CONTRACT_ADDRESS = CONTRACTS.agentForge as `0x${string}`;
-const USE_MOCK = !CONTRACTS.agentForge || CONTRACTS.agentForge === "0x0000000000000000000000000000000000000000";
+
+// Lazy-load publicClient only in browser to prevent SSR issues
+function getPublicClient() {
+  if (typeof window === "undefined") return null;
+  // Dynamic import at runtime
+  const { createPublicClient, http } = require("viem");
+  return createPublicClient({
+    chain: {
+      id: 5042002,
+      name: "Arc Testnet",
+      nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
+      rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } },
+    },
+    transport: http("https://rpc.testnet.arc.network", { timeout: 8000, retryCount: 1 }),
+  });
+}
 
 // Helper: timeout wrapper for RPC calls
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
@@ -21,15 +34,14 @@ export function useAgents() {
   const [loading, setLoading] = useState(false);
 
   const fetchAgents = useCallback(async () => {
-    if (USE_MOCK) {
-      setAgents(MOCK_AGENTS);
-      return;
-    }
+    if (typeof window === "undefined") return;
+    const client = getPublicClient();
+    if (!client) return;
 
     setLoading(true);
     try {
       const nextId = await withTimeout(
-        publicClient.readContract({
+        client.readContract({
           address: CONTRACT_ADDRESS,
           abi: AGENTFORGE_ABI,
           functionName: "nextAgentId",
@@ -47,7 +59,7 @@ export function useAgents() {
       const agentPromises = [];
       for (let i = 1; i < numAgents; i++) {
         agentPromises.push(
-          publicClient.readContract({
+          client.readContract({
             address: CONTRACT_ADDRESS,
             abi: AGENTFORGE_ABI,
             functionName: "getAgent",
@@ -91,7 +103,6 @@ export function useAgents() {
       setAgents(parsed.filter((a) => a.status === 1));
     } catch (error) {
       console.error("Failed to fetch agents:", error);
-      // Don't fallback to mock — show empty
       setAgents([]);
     } finally {
       setLoading(false);
@@ -106,15 +117,14 @@ export function useJobs() {
   const [loading, setLoading] = useState(false);
 
   const fetchJobs = useCallback(async () => {
-    if (USE_MOCK) {
-      setJobs(MOCK_JOBS);
-      return;
-    }
+    if (typeof window === "undefined") return;
+    const client = getPublicClient();
+    if (!client) return;
 
     setLoading(true);
     try {
       const nextId = await withTimeout(
-        publicClient.readContract({
+        client.readContract({
           address: CONTRACT_ADDRESS,
           abi: AGENTFORGE_ABI,
           functionName: "nextJobId",
@@ -132,7 +142,7 @@ export function useJobs() {
       const jobPromises = [];
       for (let i = 1; i < numJobs; i++) {
         jobPromises.push(
-          publicClient.readContract({
+          client.readContract({
             address: CONTRACT_ADDRESS,
             abi: AGENTFORGE_ABI,
             functionName: "jobs",
@@ -195,14 +205,13 @@ export function useStats() {
   });
 
   const fetchStats = useCallback(async () => {
-    if (USE_MOCK) {
-      setStats({ totalAgents: 5, totalJobs: 5, totalVolume: BigInt("1853000000000000000000") });
-      return;
-    }
+    if (typeof window === "undefined") return;
+    const client = getPublicClient();
+    if (!client) return;
 
     try {
       const result = await withTimeout(
-        publicClient.readContract({
+        client.readContract({
           address: CONTRACT_ADDRESS,
           abi: AGENTFORGE_ABI,
           functionName: "getStats",
