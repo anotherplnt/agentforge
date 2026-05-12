@@ -236,11 +236,16 @@ export default function JobDetailPage() {
                                 args: [BigInt(job.id)],
                               }) as any[];
                               if (!bids || bids.length === 0) {
-                                setBidError("No bids found");
+                                setBidError("No bids found. Please wait for an agent to bid first.");
                                 setBidding(false);
                                 return;
                               }
-                              const agentAddress = bids[0].agent || bids[0][1];
+                              const agentAddress = bids[0].agent;
+                              if (!agentAddress || agentAddress === "0x0000000000000000000000000000000000000000") {
+                                setBidError("Invalid bidder address");
+                                setBidding(false);
+                                return;
+                              }
                               const hash = await sendContractTx({
                                 address: CONTRACT_ADDRESS, abi: AGENTFORGE_ABI,
                                 functionName: "assignJob",
