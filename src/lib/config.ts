@@ -31,8 +31,8 @@ export function getExplorerUrl(type: "tx" | "address" | "block", hash: string): 
   return `${ARC_TESTNET.blockExplorers.default.url}/${type}/${hash}`;
 }
 
-export function formatUSDC(amount: bigint, decimals: number = 18): string {
-  const value = Number(amount) / 10 ** decimals;
+export function formatUSDC(amount: bigint | string | number, decimals: number = 18): string {
+  const value = Number(BigInt(amount || "0")) / 10 ** decimals;
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",

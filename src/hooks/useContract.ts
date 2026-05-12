@@ -89,12 +89,12 @@ export function useAgents() {
           owner: agent.owner,
           metadataURI: agent.metadataURI,
           capabilities: agent.capabilities,
-          pricePerTask: agent.pricePerTask,
-          pricePerInference: agent.pricePerInference,
+          pricePerTask: agent.pricePerTask.toString(),
+          pricePerInference: agent.pricePerInference.toString(),
           status: agent.status,
           totalJobs: Number(agent.totalJobs),
           successfulJobs: Number(agent.successfulJobs),
-          totalEarnings: agent.totalEarnings,
+          totalEarnings: agent.totalEarnings.toString(),
           reputationScore: Number(agent.reputationScore),
           registeredAt: Number(agent.registeredAt),
         };
@@ -175,7 +175,7 @@ export function useJobs() {
           title: job.title,
           description: job.description,
           requiredCapabilities: job.requiredCapabilities || "",
-          budget: job.budget,
+          budget: job.budget.toString(),
           deadline: Number(job.deadline),
           status: job.status,
           deliverableURI: job.deliverableURI,
@@ -201,7 +201,7 @@ export function useStats() {
   const [stats, setStats] = useState({
     totalAgents: 0,
     totalJobs: 0,
-    totalVolume: BigInt(0),
+    totalVolume: "0",
   });
 
   const fetchStats = useCallback(async () => {
@@ -223,7 +223,7 @@ export function useStats() {
       setStats({
         totalAgents: Number(totalAgents),
         totalJobs: Number(totalJobs),
-        totalVolume,
+        totalVolume: totalVolume.toString(),
       });
     } catch (error) {
       console.error("Failed to fetch stats:", error);

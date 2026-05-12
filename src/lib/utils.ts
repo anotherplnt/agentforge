@@ -40,13 +40,13 @@ export interface AgentData {
   id: number;
   owner: string;
   metadataURI: string;
-  capabilities: string[];
-  pricePerTask: bigint;
-  pricePerInference: bigint;
+  capabilities: string;
+  pricePerTask: string;
+  pricePerInference: string;
   status: number;
   totalJobs: number;
   successfulJobs: number;
-  totalEarnings: bigint;
+  totalEarnings: string;
   reputationScore: number;
   registeredAt: number;
   // Parsed metadata
@@ -61,8 +61,8 @@ export interface JobData {
   assignedAgent: string;
   title: string;
   description: string;
-  requiredCapabilities: string[];
-  budget: bigint;
+  requiredCapabilities: string;
+  budget: string;
   deadline: number;
   status: number;
   deliverableURI: string;
@@ -74,7 +74,7 @@ export interface JobData {
 export interface BidData {
   jobId: number;
   agent: string;
-  price: bigint;
+  price: string;
   proposal: string;
   estimatedTime: number;
   createdAt: number;
