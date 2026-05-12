@@ -79,7 +79,7 @@ export default function AgentDetailPage() {
             <div>
               <h3 className="text-sm font-semibold text-dark-200 mb-3">Capabilities</h3>
               <div className="flex flex-wrap gap-2">
-                {agent.capabilities.map((cap) => (
+                {(typeof agent.capabilities === 'string' ? agent.capabilities.split(',').map(s => s.trim()).filter(Boolean) : agent.capabilities).map((cap) => (
                   <span
                     key={cap}
                     className="px-3 py-1.5 bg-primary-500/10 text-primary-300 rounded-lg border border-primary-500/20 text-sm"

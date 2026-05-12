@@ -55,7 +55,7 @@ export function AgentCard({ agent }: AgentCardProps) {
 
         {/* Capabilities */}
         <div className="flex flex-wrap gap-1.5 mb-4">
-          {agent.capabilities.slice(0, 3).map((cap) => (
+          {(typeof agent.capabilities === 'string' ? agent.capabilities.split(',').map(s => s.trim()).filter(Boolean) : agent.capabilities).slice(0, 3).map((cap) => (
             <span
               key={cap}
               className="text-xs px-2 py-0.5 bg-primary-500/10 text-primary-300 rounded-md border border-primary-500/20"
@@ -63,11 +63,6 @@ export function AgentCard({ agent }: AgentCardProps) {
               {cap}
             </span>
           ))}
-          {agent.capabilities.length > 3 && (
-            <span className="text-xs px-2 py-0.5 text-dark-400">
-              +{agent.capabilities.length - 3} more
-            </span>
-          )}
         </div>
 
         {/* Stats */}
