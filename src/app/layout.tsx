@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { WalletAutoConnect } from "@/components/WalletAutoConnect";
 
 export const metadata: Metadata = {
   title: "AgentForge — AI Agent Marketplace on Arc Network",
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className="min-h-screen bg-dark-950 text-dark-50 antialiased">
+        <WalletAutoConnect />
         <Navbar />
         <main className="min-h-[calc(100vh-140px)]">{children}</main>
         <Footer />

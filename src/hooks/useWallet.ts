@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { switchToArcTestnet } from "@/lib/client";
-import { ARC_TESTNET } from "@/lib/config";
 
 interface WalletState {
   address: string | null;
@@ -9,8 +8,7 @@ interface WalletState {
   chainId: number | null;
   connect: () => Promise<void>;
   disconnect: () => void;
-  setAddress: (address: string | null) => void;
-  setChainId: (chainId: number | null) => void;
+  autoConnect: () => Promise<void>;
 }
 
 export const useWalletStore = create<WalletState>((set, get) => ({
@@ -28,7 +26,6 @@ export const useWalletStore = create<WalletState>((set, get) => ({
     set({ isConnecting: true });
 
     try {
-      // Request accounts
       const accounts = (await window.ethereum.request({
         method: "eth_requestAccounts",
       })) as string[];
@@ -38,7 +35,6 @@ export const useWalletStore = create<WalletState>((set, get) => ({
         return;
       }
 
-      // Switch to Arc testnet
       await switchToArcTestnet();
 
       const chainId = (await window.ethereum.request({
@@ -52,17 +48,20 @@ export const useWalletStore = create<WalletState>((set, get) => ({
         chainId: parseInt(chainId, 16),
       });
 
+      // Save connected state
+      localStorage.setItem("agentforge_connected", "true");
+
       // Listen for account changes
       window.ethereum.on("accountsChanged", (newAccounts: unknown) => {
         const accts = newAccounts as string[];
         if (accts.length === 0) {
           set({ address: null, isConnected: false, chainId: null });
+          localStorage.removeItem("agentforge_connected");
         } else {
           set({ address: accts[0], isConnected: true });
         }
       });
 
-      // Listen for chain changes
       window.ethereum.on("chainChanged", (newChainId: unknown) => {
         const cid = parseInt(newChainId as string, 16);
         set({ chainId: cid });
@@ -75,18 +74,52 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   },
 
   disconnect: () => {
-    set({
-      address: null,
-      isConnected: false,
-      chainId: null,
-    });
+    set({ address: null, isConnected: false, chainId: null });
+    localStorage.removeItem("agentforge_connected");
   },
 
-  setAddress: (address) => {
-    set({ address, isConnected: !!address });
-  },
+  autoConnect: async () => {
+    if (typeof window === "undefined" || !window.ethereum) return;
+    
+    const wasConnected = localStorage.getItem("agentforge_connected");
+    if (!wasConnected) return;
 
-  setChainId: (chainId) => {
-    set({ chainId });
+    try {
+      const accounts = (await window.ethereum.request({
+        method: "eth_accounts",
+      })) as string[];
+
+      if (accounts && accounts.length > 0) {
+        const chainId = (await window.ethereum.request({
+          method: "eth_chainId",
+        })) as string;
+
+        set({
+          address: accounts[0],
+          isConnected: true,
+          chainId: parseInt(chainId, 16),
+        });
+
+        // Listen for changes
+        window.ethereum.on("accountsChanged", (newAccounts: unknown) => {
+          const accts = newAccounts as string[];
+          if (accts.length === 0) {
+            set({ address: null, isConnected: false, chainId: null });
+            localStorage.removeItem("agentforge_connected");
+          } else {
+            set({ address: accts[0], isConnected: true });
+          }
+        });
+
+        window.ethereum.on("chainChanged", (newChainId: unknown) => {
+          const cid = parseInt(newChainId as string, 16);
+          set({ chainId: cid });
+        });
+      } else {
+        localStorage.removeItem("agentforge_connected");
+      }
+    } catch {
+      localStorage.removeItem("agentforge_connected");
+    }
   },
 }));
