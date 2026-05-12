@@ -153,21 +153,25 @@ export function useJobs() {
 
       const results = await withTimeout(Promise.all(jobPromises), 15000);
       const parsed: JobData[] = results.map((r: unknown) => {
-        const job = r as {
-          id: bigint;
-          client: string;
-          assignedAgent: string;
-          title: string;
-          description: string;
-          requiredCapabilities: string;
-          budget: bigint;
-          deadline: bigint;
-          status: number;
-          deliverableURI: string;
-          createdAt: bigint;
-          completedAt: bigint;
-          bidCount: bigint;
-        };
+        const job = r as any;
+        // Public mapping returns tuple array, not named struct
+        if (Array.isArray(job)) {
+          return {
+            id: Number(job[0]),
+            client: String(job[1]),
+            assignedAgent: String(job[2]),
+            title: String(job[3]),
+            description: String(job[4]),
+            requiredCapabilities: String(job[5] || ""),
+            budget: String(job[6]),
+            deadline: Number(job[7]),
+            status: Number(job[8]),
+            deliverableURI: String(job[9]),
+            createdAt: Number(job[10]),
+            completedAt: Number(job[11]),
+            bidCount: Number(job[12]),
+          };
+        }
         return {
           id: Number(job.id),
           client: job.client,
@@ -177,7 +181,7 @@ export function useJobs() {
           requiredCapabilities: job.requiredCapabilities || "",
           budget: job.budget.toString(),
           deadline: Number(job.deadline),
-          status: job.status,
+          status: Number(job.status),
           deliverableURI: job.deliverableURI,
           createdAt: Number(job.createdAt),
           completedAt: Number(job.completedAt),
