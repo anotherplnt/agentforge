@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install --omit=dev",
   "buildCommand": "next build",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "installCommand": "npm install --production=false"
 }
