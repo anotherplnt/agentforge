@@ -4,29 +4,6 @@ import Link from "next/link";
 import { useStats } from "@/hooks/useContract";
 import { formatUSDC } from "@/lib/config";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-
-// ─── Animation Variants ───────────────────────────────────────────────────────
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
-};
-
-const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.6 } },
-};
-
-const staggerContainer = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.12 } },
-};
-
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.9 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
-};
 
 // ─── Animated Counter ─────────────────────────────────────────────────────────
 
@@ -74,15 +51,9 @@ function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: number; p
 
 function RevealSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <motion.section
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={fadeUp}
-      className={className}
-    >
+    <section className={`animate-fade-up ${className}`}>
       {children}
-    </motion.section>
+    </section>
   );
 }
 
@@ -91,29 +62,21 @@ function RevealSection({ children, className = "" }: { children: React.ReactNode
 function FloatingOrbs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full bg-primary-500/10 blur-[120px]"
+      <div
+        className="absolute w-[500px] h-[500px] rounded-full bg-primary-500/10 blur-[120px] animate-float"
         style={{ top: "-10%", left: "-5%" }}
-        animate={{ x: [0, 30, -20, 0], y: [0, -20, 30, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
       />
-      <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full bg-accent-500/8 blur-[100px]"
-        style={{ top: "20%", right: "-10%" }}
-        animate={{ x: [0, -40, 20, 0], y: [0, 30, -20, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+      <div
+        className="absolute w-[400px] h-[400px] rounded-full bg-accent-500/8 blur-[100px] animate-float"
+        style={{ top: "20%", right: "-10%", animationDelay: "2s" }}
       />
-      <motion.div
-        className="absolute w-[300px] h-[300px] rounded-full bg-primary-400/6 blur-[80px]"
-        style={{ bottom: "10%", left: "30%" }}
-        animate={{ x: [0, 20, -30, 0], y: [0, -30, 10, 0] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+      <div
+        className="absolute w-[300px] h-[300px] rounded-full bg-primary-400/6 blur-[80px] animate-float"
+        style={{ bottom: "10%", left: "30%", animationDelay: "4s" }}
       />
-      <motion.div
-        className="absolute w-[200px] h-[200px] rounded-full bg-accent-400/5 blur-[60px]"
-        style={{ top: "60%", right: "20%" }}
-        animate={{ x: [0, -15, 25, 0], y: [0, 20, -15, 0] }}
-        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+      <div
+        className="absolute w-[200px] h-[200px] rounded-full bg-accent-400/5 blur-[60px] animate-float"
+        style={{ top: "60%", right: "20%", animationDelay: "6s" }}
       />
     </div>
   );
@@ -204,40 +167,35 @@ export default function HomePage() {
         <FloatingOrbs />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-          <motion.div
-            className="text-center max-w-4xl mx-auto"
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-          >
+          <div className="text-center max-w-4xl mx-auto animate-fade-in">
             {/* Badge */}
-            <motion.div variants={fadeIn} className="inline-flex items-center gap-2 px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full mb-8 backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-500/10 border border-primary-500/20 rounded-full mb-8 backdrop-blur-sm animate-fade-in">
               <span className="w-2 h-2 bg-accent-400 rounded-full animate-pulse" />
               <span className="text-sm text-primary-300 font-medium">Live on Arc Testnet</span>
-            </motion.div>
+            </div>
 
             {/* Headline */}
-            <motion.h1 variants={fadeUp} className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] tracking-tight">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] tracking-tight animate-fade-up">
               <span className="text-dark-100">The Autonomous</span>
               <br />
               <span className="gradient-text">AI Agent Economy</span>
-            </motion.h1>
+            </h1>
 
-            <motion.p variants={fadeUp} className="text-lg sm:text-xl text-dark-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-dark-400 mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-up">
               Deploy AI agents that earn USDC autonomously. Post jobs with escrow,
               pay per inference, and settle everything on-chain with Circle&apos;s stablecoin infrastructure.
-            </motion.p>
+            </p>
 
             {/* CTAs */}
-            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up">
               <Link href="/agents" className="btn-primary text-lg px-8 py-4 group relative overflow-hidden">
                 <span className="relative z-10">Browse Agents</span>
               </Link>
               <Link href="/jobs" className="btn-secondary text-lg px-8 py-4">
                 Post a Job
               </Link>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -278,22 +236,15 @@ export default function HomePage() {
           </p>
         </div>
 
-        <motion.div
-          className="relative grid grid-cols-1 md:grid-cols-4 gap-8"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-        >
+        <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Connecting line (desktop only) */}
           <div className="hidden md:block absolute top-16 left-[12%] right-[12%] h-px bg-gradient-to-r from-primary-500/30 via-accent-500/30 to-primary-500/30" />
 
           {howItWorks.map((item, i) => (
-            <motion.div
+            <div
               key={item.step}
-              variants={fadeUp}
-              className="glass-card p-6 text-center group hover:border-primary-500/30 transition-all duration-300 relative"
-              whileHover={{ y: -8, scale: 1.02 }}
+              className="glass-card p-6 text-center group hover:border-primary-500/30 hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 relative animate-fade-up"
+              style={{ animationDelay: `${i * 120}ms` }}
             >
               {/* Step indicator */}
               <div className="w-10 h-10 rounded-full bg-primary-500/20 border border-primary-500/40 flex items-center justify-center mx-auto mb-4 relative z-10">
@@ -302,9 +253,9 @@ export default function HomePage() {
               <div className="text-4xl mb-4">{item.icon}</div>
               <h3 className="text-lg font-semibold text-dark-100 mb-2">{item.title}</h3>
               <p className="text-sm text-dark-400 leading-relaxed">{item.description}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </RevealSection>
 
       {/* ═══════════════════════════════════════════════════════════════════════
@@ -318,26 +269,19 @@ export default function HomePage() {
           </p>
         </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-        >
-          {features.map((feature) => (
-            <motion.div
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, i) => (
+            <div
               key={feature.title}
-              variants={fadeUp}
-              className="glass-card p-6 group hover:border-accent-500/30 transition-all duration-300"
-              whileHover={{ y: -6, scale: 1.02, boxShadow: "0 20px 60px -15px rgba(99, 102, 241, 0.15)" }}
+              className="glass-card p-6 group hover:border-accent-500/30 hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-[0_20px_60px_-15px_rgba(99,102,241,0.15)] transition-all duration-300 animate-fade-up"
+              style={{ animationDelay: `${i * 120}ms` }}
             >
               <div className="text-3xl mb-4">{feature.icon}</div>
               <h3 className="text-lg font-semibold text-dark-100 mb-2 group-hover:text-primary-300 transition-colors">{feature.title}</h3>
               <p className="text-sm text-dark-400 leading-relaxed">{feature.description}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </RevealSection>
 
       {/* ═══════════════════════════════════════════════════════════════════════
@@ -351,19 +295,12 @@ export default function HomePage() {
           </p>
         </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-        >
-          {marketplaceAgents.map((agent) => (
-            <motion.div
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {marketplaceAgents.map((agent, i) => (
+            <div
               key={agent.name}
-              variants={scaleIn}
-              className="glass-card p-6 group hover:border-primary-500/30 transition-all duration-300"
-              whileHover={{ y: -6, scale: 1.03 }}
+              className="glass-card p-6 group hover:border-primary-500/30 hover:-translate-y-1.5 hover:scale-[1.03] transition-all duration-300 animate-scale-in"
+              style={{ animationDelay: `${i * 120}ms` }}
             >
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500/20 to-accent-500/20 border border-primary-500/20 flex items-center justify-center mb-4">
                 <span className="text-lg">🤖</span>
@@ -377,21 +314,15 @@ export default function HomePage() {
               <div className="mt-3 pt-3 border-t border-dark-700/50">
                 <span className="text-sm font-medium text-accent-400">{agent.price}</span>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="text-center mt-10"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-        >
+        <div className="text-center mt-10 animate-fade-in">
           <Link href="/agents" className="btn-secondary px-8 py-3">
             View All Agents →
           </Link>
-        </motion.div>
+        </div>
       </RevealSection>
 
       {/* ═══════════════════════════════════════════════════════════════════════
@@ -429,11 +360,7 @@ export default function HomePage() {
           </div>
 
           {/* Right: Chat Mockup */}
-          <motion.div
-            className="glass-card p-6 border border-dark-700/50"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3 }}
-          >
+          <div className="glass-card p-6 border border-dark-700/50 hover:scale-[1.02] transition-transform duration-300">
             <div className="flex items-center gap-2 mb-4 pb-4 border-b border-dark-700/50">
               <div className="w-3 h-3 rounded-full bg-red-500/60" />
               <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
@@ -458,7 +385,7 @@ export default function HomePage() {
                 <span className="text-dark-400">tx: 0x7f3a...c291 ✓</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </RevealSection>
 
@@ -473,13 +400,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-        >
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
           {[
             { label: "Client", sublabel: "Posts Job", icon: "👤" },
             { label: "Escrow", sublabel: "USDC Locked", icon: "🔒" },
@@ -487,7 +408,7 @@ export default function HomePage() {
             { label: "Verify", sublabel: "On-chain Proof", icon: "✅" },
             { label: "Settle", sublabel: "USDC Released", icon: "💸" },
           ].map((step, i) => (
-            <motion.div key={step.label} variants={fadeUp} className="relative">
+            <div key={step.label} className="relative animate-fade-up" style={{ animationDelay: `${i * 120}ms` }}>
               <div className="glass-card p-5 text-center group hover:border-primary-500/30 transition-all duration-300">
                 <div className="text-2xl mb-2">{step.icon}</div>
                 <p className="text-sm font-semibold text-dark-100">{step.label}</p>
@@ -499,17 +420,11 @@ export default function HomePage() {
                   →
                 </div>
               )}
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="mt-12 glass-card p-6 max-w-2xl mx-auto border border-dark-700/50"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-        >
+        <div className="mt-12 glass-card p-6 max-w-2xl mx-auto border border-dark-700/50 animate-fade-in">
           <div className="font-mono text-xs text-dark-400 space-y-2">
             <div className="flex justify-between">
               <span className="text-dark-500">Network</span>
@@ -528,18 +443,14 @@ export default function HomePage() {
               <span className="text-yellow-400">ERC-8004 / ERC-8183</span>
             </div>
           </div>
-        </motion.div>
+        </div>
       </RevealSection>
 
       {/* ═══════════════════════════════════════════════════════════════════════
           FINAL CTA
       ═══════════════════════════════════════════════════════════════════════ */}
       <RevealSection className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 pb-32">
-        <motion.div
-          className="glass-card p-12 sm:p-16 text-center relative overflow-hidden border border-dark-700/50"
-          whileHover={{ boxShadow: "0 30px 80px -20px rgba(99, 102, 241, 0.2)" }}
-          transition={{ duration: 0.4 }}
-        >
+        <div className="glass-card p-12 sm:p-16 text-center relative overflow-hidden border border-dark-700/50 hover:shadow-[0_30px_80px_-20px_rgba(99,102,241,0.2)] transition-shadow duration-400">
           {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-transparent to-accent-500/5" />
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary-500/5 rounded-full blur-[80px]" />
@@ -567,7 +478,7 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-        </motion.div>
+        </div>
       </RevealSection>
     </div>
   );
