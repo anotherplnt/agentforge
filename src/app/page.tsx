@@ -23,7 +23,7 @@ function AnimatedCounter({ value, prefix = "", suffix = "" }: { value: number; p
   }, []);
 
   useEffect(() => {
-    if (!started) return;
+    if (!started || value === 0) return;
     const duration = 2000;
     const steps = 60;
     const increment = value / steps;
