@@ -1,5 +1,4 @@
 {
   "buildCommand": "next build",
-  "outputDirectory": ".next",
-  "installCommand": "npm install --production=false"
+  "outputDirectory": ".next"
 }
