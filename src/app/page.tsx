@@ -367,7 +367,7 @@ export default function Home() {
                 </div>
                 <div>
                   <p className="text-dark-400 text-xs uppercase tracking-wider mb-1">Network</p>
-                  <p className="text-white font-space font-semibold">Base L2</p>
+                  <p className="text-white font-space font-semibold">Arc Network</p>
                 </div>
               </div>
             </div>
