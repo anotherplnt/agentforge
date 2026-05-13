@@ -9,6 +9,10 @@ const config: Config = {
   darkMode: "class",
   theme: {
     extend: {
+      fontFamily: {
+        space: ["var(--font-space)"],
+        inter: ["var(--font-inter)"],
+      },
       colors: {
         primary: {
           50: "#eef2ff",
@@ -47,6 +51,12 @@ const config: Config = {
           800: "#1e293b",
           900: "#0f172a",
           950: "#020617",
+        },
+        cyber: {
+          blue: "#3B82F6",
+          cyan: "#00D1FF",
+          purple: "#7C3AED",
+          soft: "#F8FAFC",
         },
       },
       animation: {
