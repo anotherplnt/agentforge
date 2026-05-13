@@ -7,20 +7,11 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Force all pages to be client-side rendered
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false, child_process: false };
-    // Exclude hardhat from client bundles
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        hardhat: false,
-      };
-    }
-    config.externals = [...(config.externals || []), 'hardhat'];
     return config;
   },
 };
