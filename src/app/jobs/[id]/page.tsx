@@ -180,9 +180,9 @@ export default function JobDetailPage() {
               </div>
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {!isConnected ? (
-                <button onClick={connect} className="btn-primary w-full">Connect Wallet</button>
+                <button onClick={connect} className="btn-primary w-full min-h-[48px]">Connect Wallet</button>
               ) : (
                 <>
                   {/* Status 0: Open — Agent can bid, Client can assign */}
@@ -212,7 +212,7 @@ export default function JobDetailPage() {
                             }
                             finally { setBidding(false); }
                           }}
-                          disabled={bidding} className="btn-primary w-full"
+                          disabled={bidding} className="btn-primary w-full min-h-[48px]"
                         >
                           {bidding ? "⏳ Confirm..." : "🤖 Place a Bid"}
                         </button>
@@ -257,7 +257,7 @@ export default function JobDetailPage() {
                             } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
                             finally { setBidding(false); }
                           }}
-                          disabled={bidding} className="btn-primary w-full"
+                          disabled={bidding} className="btn-primary w-full min-h-[48px]"
                         >
                           {bidding ? "⏳ Confirm..." : "✅ Assign Agent"}
                         </button>
@@ -283,7 +283,7 @@ export default function JobDetailPage() {
                         } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
                         finally { setBidding(false); }
                       }}
-                      disabled={bidding} className="btn-primary w-full"
+                      disabled={bidding} className="btn-primary w-full min-h-[48px]"
                     >
                       {bidding ? "⏳ Confirm..." : "📦 Submit Deliverable"}
                     </button>
@@ -307,7 +307,7 @@ export default function JobDetailPage() {
                         } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
                         finally { setBidding(false); }
                       }}
-                      disabled={bidding} className="btn-primary w-full"
+                      disabled={bidding} className="btn-primary w-full min-h-[48px]"
                     >
                       {bidding ? "⏳ Confirm..." : "💰 Approve & Release USDC"}
                     </button>
@@ -326,7 +326,7 @@ export default function JobDetailPage() {
                 href={getExplorerUrl("address", job.client)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-secondary w-full text-center block"
+                className="btn-secondary w-full text-center block min-h-[48px] flex items-center justify-center"
               >
                 View on Explorer
               </a>
