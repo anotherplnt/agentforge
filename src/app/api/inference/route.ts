@@ -9,12 +9,12 @@ const OPERATOR_PRIVATE_KEY = process.env.OPERATOR_PRIVATE_KEY as `0x${string}` |
 const ARC_TESTNET = {
   id: 5042002,
   name: "Arc Testnet",
-  nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 6 },
+  nativeCurrency: { name: "USDC", symbol: "USDC", decimals: 18 },
   rpcUrls: { default: { http: ["https://rpc.testnet.arc.network"] } },
 } as const;
 
 const CONTRACT_ADDRESS = "0x946373Ff1Ab59224999904C8A412bcFF94210128" as `0x${string}`;
-const INFERENCE_COST = parseUnits("0.01", 6); // 0.01 USDC (6 decimals)
+const INFERENCE_COST = parseUnits("0.01", 18); // 0.01 USDC (18 decimals on Arc)
 
 const CHARGE_ABI = [
   {
@@ -106,6 +106,7 @@ export async function POST(request: NextRequest) {
           args: [depositorAddress as `0x${string}`, agentOwner, INFERENCE_COST],
         });
 
+        console.log("chargeInference tx:", hash);
         chargeTxHash = hash;
         chargeSuccess = true;
       } catch (err: any) {
