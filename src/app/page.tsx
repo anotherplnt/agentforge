@@ -318,56 +318,56 @@ export default function Home() {
       </section>
 
       {/* ─── On-Chain Settlement ─── */}
-      <section className="relative z-10 py-24 md:py-32">
+      <section className="relative z-10 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-space font-bold text-white mb-4">
+            <div className="text-center mb-10 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-space font-bold text-white mb-3 sm:mb-4">
                 On-Chain <span className="gradient-text">Settlement</span>
               </h2>
-              <p className="text-dark-200 max-w-xl mx-auto">
+              <p className="text-dark-200 max-w-xl mx-auto text-sm sm:text-base">
                 Transparent, verifiable, and trustless. Every transaction is recorded on-chain.
               </p>
             </div>
           </RevealOnScroll>
 
           <RevealOnScroll>
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 md:p-12 max-w-4xl mx-auto">
+            <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 sm:p-8 md:p-12 max-w-4xl mx-auto">
               {/* Flow diagram */}
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-4">
                 {[
                   { label: "User Request", icon: "👤", sub: "Inference call" },
                   { label: "Agent Execution", icon: "🧠", sub: "Process & respond" },
                   { label: "Proof Generation", icon: "🔐", sub: "Cryptographic hash" },
                   { label: "On-Chain Settlement", icon: "⛓️", sub: "USDC transfer" },
                 ].map((node, i) => (
-                  <div key={i} className="flex flex-col md:flex-row items-center gap-4">
-                    <div className="text-center">
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 border border-white/10 flex items-center justify-center text-2xl mb-2 mx-auto">
+                  <div key={i} className="flex flex-row sm:flex-col items-center gap-3 sm:gap-0 w-full sm:w-auto">
+                    <div className="text-center flex-1 sm:flex-none">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 border border-white/10 flex items-center justify-center text-xl sm:text-2xl mb-0 sm:mb-2 mx-auto">
                         {node.icon}
                       </div>
-                      <p className="text-white text-sm font-semibold">{node.label}</p>
-                      <p className="text-dark-400 text-xs">{node.sub}</p>
+                      <p className="text-white text-xs sm:text-sm font-semibold mt-2 sm:mt-0">{node.label}</p>
+                      <p className="text-dark-400 text-[10px] sm:text-xs">{node.sub}</p>
                     </div>
                     {i < 3 && (
-                      <svg className="w-6 h-6 text-primary-400/50 hidden md:block flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-400/50 flex-shrink-0 rotate-90 sm:rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     )}
                   </div>
                 ))}
               </div>
 
-              <div className="mt-8 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-white/5 grid grid-cols-3 gap-3 sm:gap-4 text-center">
                 <div>
-                  <p className="text-dark-400 text-xs uppercase tracking-wider mb-1">Finality</p>
-                  <p className="text-white font-space font-semibold">&lt; 2 seconds</p>
+                  <p className="text-dark-400 text-[10px] sm:text-xs uppercase tracking-wider mb-1">Finality</p>
+                  <p className="text-white font-space font-semibold text-sm sm:text-base">&lt; 2 seconds</p>
                 </div>
                 <div>
-                  <p className="text-dark-400 text-xs uppercase tracking-wider mb-1">Gas Cost</p>
-                  <p className="text-white font-space font-semibold">~$0.001</p>
+                  <p className="text-dark-400 text-[10px] sm:text-xs uppercase tracking-wider mb-1">Gas Cost</p>
+                  <p className="text-white font-space font-semibold text-sm sm:text-base">~$0.001</p>
                 </div>
                 <div>
-                  <p className="text-dark-400 text-xs uppercase tracking-wider mb-1">Network</p>
-                  <p className="text-white font-space font-semibold">Arc Network</p>
+                  <p className="text-dark-400 text-[10px] sm:text-xs uppercase tracking-wider mb-1">Network</p>
+                  <p className="text-white font-space font-semibold text-sm sm:text-base">Arc Network</p>
                 </div>
               </div>
             </div>
@@ -376,30 +376,30 @@ export default function Home() {
       </section>
 
       {/* ─── Final CTA ─── */}
-      <section className="relative z-10 py-24 md:py-32">
+      <section className="relative z-10 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <div className="relative rounded-3xl overflow-hidden">
+            <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden">
               {/* Gradient background */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-600/20 via-accent-600/10 to-primary-600/20" />
               <div className="absolute inset-0 bg-white/[0.02] backdrop-blur-3xl" />
-              <div className="absolute inset-0 border border-white/10 rounded-3xl" />
+              <div className="absolute inset-0 border border-white/10 rounded-2xl sm:rounded-3xl" />
 
-              <div className="relative px-8 py-16 md:px-16 md:py-24 text-center">
-                <h2 className="text-3xl md:text-5xl font-space font-bold text-white mb-6">
+              <div className="relative px-5 py-12 sm:px-8 sm:py-16 md:px-16 md:py-24 text-center">
+                <h2 className="text-2xl sm:text-3xl md:text-5xl font-space font-bold text-white mb-4 sm:mb-6">
                   Ready to Build the
                   <br />
                   <span className="gradient-text">Agentic Future?</span>
                 </h2>
-                <p className="text-dark-200 max-w-lg mx-auto mb-10 text-lg">
+                <p className="text-dark-200 max-w-lg mx-auto mb-7 sm:mb-10 text-sm sm:text-lg px-2">
                   Join the decentralized AI marketplace. Deploy agents, earn revenue, or leverage the world&apos;s best AI services.
                 </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link href="/agents" className="btn-primary btn-glow px-8 py-4 rounded-xl text-lg font-semibold inline-flex items-center gap-2 shadow-lg shadow-primary-500/25">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4 sm:px-0">
+                  <Link href="/agents" className="btn-primary btn-glow w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25 min-h-[48px]">
                     Start Building
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                   </Link>
-                  <Link href="/dashboard" className="btn-secondary px-8 py-4 rounded-xl text-lg font-semibold">
+                  <Link href="/dashboard" className="btn-secondary w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-semibold inline-flex items-center justify-center min-h-[48px]">
                     View Dashboard
                   </Link>
                 </div>

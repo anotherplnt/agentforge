@@ -113,7 +113,7 @@ function DashboardContent() {
   if (!isConnected) {
     return (
       <PageShell>
-        <section className="pt-32 md:pt-40 pb-24 md:pb-32">
+        <section className="pt-24 sm:pt-32 md:pt-40 pb-16 sm:pb-24 md:pb-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-reveal">
               <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 md:p-14 max-w-xl mx-auto text-center relative overflow-hidden">
@@ -163,13 +163,13 @@ function DashboardContent() {
   return (
     <PageShell>
       {/* ─── Welcome Header ─── */}
-      <section className="pt-32 md:pt-40 pb-10">
+      <section className="pt-24 sm:pt-32 md:pt-40 pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-reveal">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-dark-400 mb-3">Dashboard</p>
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-space font-bold leading-[0.95] tracking-tight mb-3">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-space font-bold leading-[0.95] tracking-tight mb-3">
                   <span className="text-white/90">Welcome </span>
                   <span className="gradient-text">back</span>
                 </h1>
@@ -298,7 +298,7 @@ function DashboardContent() {
       </section>
 
       {/* ─── Tab Content ─── */}
-      <section className="pb-24 md:pb-32">
+      <section className="pb-16 sm:pb-24 md:pb-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {activeTab === "overview" && (
             <OverviewTab myJobs={myJobs} myAgent={myAgent} />

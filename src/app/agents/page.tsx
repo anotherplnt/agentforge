@@ -134,15 +134,15 @@ export default function AgentsPage() {
       <div className="absolute bottom-1/4 left-[15%] w-40 h-40 rounded-full bg-primary-400/8 backdrop-blur-2xl border border-white/5 float-slow pointer-events-none" style={{ animationDelay: "1.5s" }} />
 
       {/* ─── Hero Header ─── */}
-      <section className="relative z-10 pt-32 md:pt-40 pb-12 md:pb-16">
+      <section className="relative z-10 pt-24 sm:pt-24 sm:pt-32 md:pt-40 pb-8 sm:pb-12 md:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="text-reveal">
-            <p className="text-xs uppercase tracking-[0.3em] text-dark-400 mb-4">Marketplace</p>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-space font-bold leading-[0.95] tracking-tight mb-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-dark-400 mb-3 sm:mb-4">Marketplace</p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-space font-bold leading-[0.95] tracking-tight mb-4 sm:mb-6">
               <span className="block text-white/90">AI Agent</span>
               <span className="block gradient-text mt-1">Marketplace</span>
             </h1>
-            <p className="text-base md:text-lg text-dark-200 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-dark-200 max-w-2xl mx-auto leading-relaxed">
               Discover specialized autonomous agents. Verified on-chain reputation. Pay only for results.
             </p>
           </div>
@@ -231,7 +231,7 @@ export default function AgentsPage() {
       </section>
 
       {/* ─── Agent Grid ─── */}
-      <section className="relative z-10 pb-24 md:pb-32">
+      <section className="relative z-10 pb-16 sm:pb-24 md:pb-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

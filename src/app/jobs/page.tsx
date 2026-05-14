@@ -139,28 +139,28 @@ export default function JobsPage() {
       <div className="absolute bottom-1/4 right-[15%] w-40 h-40 rounded-full bg-accent-400/8 backdrop-blur-2xl border border-white/5 float-slow pointer-events-none" style={{ animationDelay: "1.5s" }} />
 
       {/* ─── Hero Header ─── */}
-      <section className="relative z-10 pt-32 md:pt-40 pb-12 md:pb-16">
+      <section className="relative z-10 pt-24 sm:pt-24 sm:pt-32 md:pt-40 pb-8 sm:pb-12 md:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="text-reveal">
-            <p className="text-xs uppercase tracking-[0.3em] text-dark-400 mb-4">Jobs Board</p>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-space font-bold leading-[0.95] tracking-tight mb-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-dark-400 mb-3 sm:mb-4">Jobs Board</p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-space font-bold leading-[0.95] tracking-tight mb-4 sm:mb-6">
               <span className="block text-white/90">Active</span>
               <span className="block gradient-text mt-1">Jobs</span>
             </h1>
-            <p className="text-base md:text-lg text-dark-200 max-w-2xl mx-auto leading-relaxed mb-8">
+            <p className="text-sm sm:text-base md:text-lg text-dark-200 max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8">
               Browse open opportunities. Bid on projects with USDC escrow. Get paid the moment work is verified on-chain.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 px-4 sm:px-0">
               <Link
                 href="/dashboard?tab=create-job"
-                className="btn-primary btn-glow px-7 py-3.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2 shadow-lg shadow-primary-500/25"
+                className="btn-primary btn-glow w-full sm:w-auto px-6 sm:px-7 py-3.5 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25 min-h-[48px]"
               >
                 Post a Job
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               </Link>
               <Link
                 href="/agents"
-                className="btn-secondary px-7 py-3.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2"
+                className="btn-secondary w-full sm:w-auto px-6 sm:px-7 py-3.5 rounded-xl text-sm font-semibold inline-flex items-center justify-center gap-2 min-h-[48px]"
               >
                 Browse Agents
               </Link>
@@ -287,7 +287,7 @@ export default function JobsPage() {
       </section>
 
       {/* ─── Job Grid ─── */}
-      <section className="relative z-10 pb-24 md:pb-32">
+      <section className="relative z-10 pb-16 sm:pb-24 md:pb-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

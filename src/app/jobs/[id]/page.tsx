@@ -47,37 +47,37 @@ export default function JobDetailPage() {
   const assignedAgent = agents.find((a) => a.owner === job.assignedAgent);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-dark-400 mb-8">
+      <div className="flex items-center gap-2 text-xs sm:text-sm text-dark-400 mb-6 sm:mb-8">
         <Link href="/jobs" className="hover:text-white transition-colors">Jobs</Link>
         <span>/</span>
         <span className="text-dark-200">Job #{job.id}</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Job Header */}
-          <div className="glass-card p-8">
-            <div className="flex items-start justify-between mb-4">
-              <h1 className="text-2xl font-bold text-dark-100 flex-1 mr-4">{job.title}</h1>
-              <span className={cn("text-sm px-3 py-1 rounded-full border whitespace-nowrap", statusColor)}>
+          <div className="glass-card p-5 sm:p-6 md:p-8">
+            <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
+              <h1 className="text-xl sm:text-2xl font-bold text-dark-100 flex-1">{job.title}</h1>
+              <span className={cn("text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full border whitespace-nowrap flex-shrink-0", statusColor)}>
                 {status}
               </span>
             </div>
 
-            <p className="text-dark-300 leading-relaxed mb-6">{job.description}</p>
+            <p className="text-sm sm:text-base text-dark-300 leading-relaxed mb-4 sm:mb-6">{job.description}</p>
 
             {/* Required Capabilities */}
             {job.requiredCapabilities && job.requiredCapabilities.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-dark-200 mb-2">Required Capabilities</h3>
-                <div className="flex flex-wrap gap-2">
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-xs sm:text-sm font-semibold text-dark-200 mb-2">Required Capabilities</h3>
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {(typeof job.requiredCapabilities === 'string' ? job.requiredCapabilities.split(',').map(s => s.trim()).filter(Boolean) : job.requiredCapabilities).map((cap) => (
                     <span
                       key={cap}
-                      className="px-3 py-1 bg-accent-500/10 text-accent-300 rounded-lg border border-accent-500/20 text-sm"
+                      className="px-2 sm:px-3 py-1 bg-accent-500/10 text-accent-300 rounded-lg border border-accent-500/20 text-xs sm:text-sm"
                     >
                       {cap}
                     </span>
@@ -88,13 +88,13 @@ export default function JobDetailPage() {
 
             {/* Deliverable */}
             {job.deliverableURI && (
-              <div className="bg-dark-800/50 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-dark-200 mb-2">Deliverable</h3>
+              <div className="bg-dark-800/50 rounded-lg p-3 sm:p-4">
+                <h3 className="text-xs sm:text-sm font-semibold text-dark-200 mb-2">Deliverable</h3>
                 <a
                   href={job.deliverableURI}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-400 hover:underline text-sm break-all"
+                  className="text-primary-400 hover:underline text-xs sm:text-sm break-all"
                 >
                   {job.deliverableURI}
                 </a>
@@ -104,17 +104,17 @@ export default function JobDetailPage() {
 
           {/* Assigned Agent */}
           {assignedAgent && (
-            <div className="glass-card p-6">
-              <h3 className="text-lg font-semibold text-dark-100 mb-4">Assigned Agent</h3>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center text-2xl border border-primary-500/20">
+            <div className="glass-card p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-semibold text-dark-100 mb-3 sm:mb-4">Assigned Agent</h3>
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-xl flex items-center justify-center text-xl sm:text-2xl border border-primary-500/20 flex-shrink-0">
                   {assignedAgent.avatar || "🤖"}
                 </div>
-                <div>
-                  <Link href={`/agents/${assignedAgent.id}`} className="font-semibold text-dark-100 hover:text-primary-400">
+                <div className="min-w-0 flex-1">
+                  <Link href={`/agents/${assignedAgent.id}`} className="font-semibold text-sm sm:text-base text-dark-100 hover:text-primary-400 truncate block">
                     {assignedAgent.name || `Agent #${assignedAgent.id}`}
                   </Link>
-                  <p className="text-sm text-dark-400">
+                  <p className="text-xs sm:text-sm text-dark-400">
                     ⭐ {(assignedAgent.reputationScore / 100).toFixed(2)} · {assignedAgent.successfulJobs} jobs completed
                   </p>
                 </div>
@@ -124,44 +124,44 @@ export default function JobDetailPage() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Job Details */}
-          <div className="glass-card p-6">
-            <h3 className="text-lg font-semibold text-dark-100 mb-4">Details</h3>
-            <div className="space-y-4">
+          <div className="glass-card p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-dark-100 mb-3 sm:mb-4">Details</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-dark-400">Budget</span>
-                <span className="text-accent-400 font-bold text-lg">{formatUSDC(job.budget)}</span>
+                <span className="text-sm text-dark-400">Budget</span>
+                <span className="text-accent-400 font-bold text-base sm:text-lg">{formatUSDC(job.budget)}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-dark-400">Client</span>
+              <div className="flex justify-between items-center gap-2">
+                <span className="text-sm text-dark-400">Client</span>
                 <a
                   href={getExplorerUrl("address", job.client)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-400 hover:underline text-sm"
+                  className="text-primary-400 hover:underline text-xs sm:text-sm"
                 >
                   {shortenAddress(job.client)}
                 </a>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-dark-400">Deadline</span>
-                <span className="text-dark-200 text-sm">{timeRemaining(job.deadline)}</span>
+                <span className="text-sm text-dark-400">Deadline</span>
+                <span className="text-dark-200 text-xs sm:text-sm">{timeRemaining(job.deadline)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-dark-400">Posted</span>
-                <span className="text-dark-200 text-sm">{timeAgo(job.createdAt)}</span>
+                <span className="text-sm text-dark-400">Posted</span>
+                <span className="text-dark-200 text-xs sm:text-sm">{timeAgo(job.createdAt)}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-dark-400">Bids</span>
-                <span className="text-dark-200 font-semibold">{job.bidCount}</span>
+                <span className="text-sm text-dark-400">Bids</span>
+                <span className="text-dark-200 font-semibold text-sm">{job.bidCount}</span>
               </div>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="glass-card p-6">
-            <h3 className="text-lg font-semibold text-dark-100 mb-4">Actions</h3>
+          <div className="glass-card p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-semibold text-dark-100 mb-3 sm:mb-4">Actions</h3>
 
             {bidSuccess && (
               <div className="mb-4 p-3 bg-accent-500/10 border border-accent-500/30 rounded-lg text-accent-400 text-sm">
