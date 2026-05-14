@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useWalletStore } from "@/hooks/useWallet";
@@ -81,6 +81,14 @@ function PageShell({ children }: { children: React.ReactNode }) {
 /* ─── Main Page ─── */
 
 export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-dark-950" />}>
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+function DashboardContent() {
   const { address, isConnected, isConnecting, connect } = useWalletStore();
   const { agents, fetchAgents } = useAgents();
   const { jobs, fetchJobs } = useJobs();
