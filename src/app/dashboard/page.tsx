@@ -1086,19 +1086,6 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
     setIsTyping(true);
 
     try {
-      try {
-        await switchToArcTestnet();
-        await sendContractTx({
-          address: CONTRACT_ADDRESS,
-          abi: AGENTFORGE_ABI,
-          functionName: "chargeInference",
-          args: [BigInt(selectedAgent?.id || 1)],
-          from: address,
-        });
-      } catch (chargeErr: any) {
-        console.warn("Charge skipped:", chargeErr?.shortMessage || chargeErr?.message);
-      }
-
       const res = await fetch("/api/inference", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1106,20 +1093,39 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
           prompt: userMessage,
           agentId: selectedAgent?.id || 1,
           depositorAddress: address || "0x0000000000000000000000000000000000000000",
+          agentOwnerAddress: selectedAgent?.owner || null,
           history: newMessages.filter((m) => m.content).slice(-6),
         }),
       });
 
-      if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
+
+      // Handle insufficient balance
+      if (res.status === 402 || data.code === "INSUFFICIENT_BALANCE") {
+        setMessages((prev) => [
+          ...prev,
+          { role: "agent", content: "⚠️ Insufficient pool balance. Please deposit USDC to your inference pool first.", cost: "$0.00" },
+        ]);
+        setIsTyping(false);
+        return;
+      }
+
+      if (!res.ok) throw new Error(data.error || `API error: ${res.status}`);
+
       const cost = data.inference?.cost || 0.01;
       setTotalCost((prev) => prev + cost);
 
+      // Show charge status in message
+      const chargeNote = data.charge?.success
+        ? ` · [charged $${cost.toFixed(2)} USDC on-chain]`
+        : "";
+
       setMessages((prev) => [
         ...prev,
-        { role: "agent", content: data.response || "Processing complete.", cost: `$${cost.toFixed(4)}` },
+        { role: "agent", content: data.response || "Processing complete.", cost: `$${cost.toFixed(4)}${chargeNote}` },
       ]);
 
+      // Refresh pool balance
       setDepositing((prev) => !prev);
       setTimeout(() => setDepositing((prev) => !prev), 100);
     } catch (err) {
