@@ -10,18 +10,14 @@
 
   body {
     @apply bg-dark-950 text-dark-50;
-    background-image: url('/bg-hero.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
+    background-color: #050816;
   }
 
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.55);
+    background: #050816;
     pointer-events: none;
     z-index: 0;
   }

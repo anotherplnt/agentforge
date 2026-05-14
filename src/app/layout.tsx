@@ -29,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`dark ${inter.variable} ${spaceGrotesk.variable}`}>
-      <body className={`min-h-screen bg-dark-950 text-dark-50 antialiased ${inter.className}`}>
+      <body className={`min-h-screen bg-[#050816] text-dark-50 antialiased ${inter.className}`}>
         <WalletAutoConnect />
         <Navbar />
         <main className="min-h-[calc(100vh-140px)]">{children}</main>
