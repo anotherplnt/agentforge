@@ -334,23 +334,23 @@ export default function Home() {
           <RevealOnScroll>
             <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 sm:p-8 md:p-12 max-w-4xl mx-auto">
               {/* Flow diagram */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-2">
                 {[
                   { label: "User Request", icon: "👤", sub: "Inference call" },
                   { label: "Agent Execution", icon: "🧠", sub: "Process & respond" },
                   { label: "Proof Generation", icon: "🔐", sub: "Cryptographic hash" },
                   { label: "On-Chain Settlement", icon: "⛓️", sub: "USDC transfer" },
                 ].map((node, i) => (
-                  <div key={i} className="flex flex-row sm:flex-col items-center gap-3 sm:gap-0 w-full sm:w-auto">
-                    <div className="text-center flex-1 sm:flex-none">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 border border-white/10 flex items-center justify-center text-xl sm:text-2xl mb-0 sm:mb-2 mx-auto">
+                  <div key={i} className="flex flex-col items-center gap-2 w-full sm:w-auto">
+                    <div className="text-center">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 border border-white/10 flex items-center justify-center text-2xl mb-2 mx-auto">
                         {node.icon}
                       </div>
-                      <p className="text-white text-xs sm:text-sm font-semibold mt-2 sm:mt-0">{node.label}</p>
+                      <p className="text-white text-xs sm:text-sm font-semibold">{node.label}</p>
                       <p className="text-dark-400 text-[10px] sm:text-xs">{node.sub}</p>
                     </div>
                     {i < 3 && (
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary-400/50 flex-shrink-0 rotate-90 sm:rotate-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                      <svg className="w-5 h-5 text-primary-400/50 flex-shrink-0 rotate-90 sm:rotate-0 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     )}
                   </div>
                 ))}
