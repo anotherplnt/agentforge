@@ -113,7 +113,7 @@ function DashboardContent() {
   if (!isConnected) {
     return (
       <PageShell>
-        <section className="pt-28 sm:pt-32 md:pt-40 pb-16 sm:pb-24 md:pb-32">
+        <section className="pt-32 sm:pt-36 md:pt-44 pb-16 sm:pb-24 md:pb-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-reveal">
               <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 md:p-14 max-w-xl mx-auto text-center relative overflow-hidden">
@@ -163,7 +163,7 @@ function DashboardContent() {
   return (
     <PageShell>
       {/* ─── Welcome Header ─── */}
-      <section className="pt-28 sm:pt-32 md:pt-40 pb-10">
+      <section className="pt-32 sm:pt-36 md:pt-44 pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-reveal">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
