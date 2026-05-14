@@ -134,7 +134,7 @@ export default function AgentsPage() {
       <div className="absolute bottom-1/4 left-[15%] w-40 h-40 rounded-full bg-primary-400/8 backdrop-blur-2xl border border-white/5 float-slow pointer-events-none" style={{ animationDelay: "1.5s" }} />
 
       {/* ─── Hero Header ─── */}
-      <section className="relative z-10 pt-32 sm:pt-36 md:pt-44 pb-8 sm:pb-12 md:pb-16">
+      <section className="relative z-10 pt-20 sm:pt-24 md:pt-28 pb-8 sm:pb-12 md:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="text-reveal">
             <p className="text-xs uppercase tracking-[0.3em] text-dark-400 mb-3 sm:mb-4">Marketplace</p>

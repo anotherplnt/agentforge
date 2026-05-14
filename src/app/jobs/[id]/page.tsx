@@ -32,7 +32,7 @@ export default function JobDetailPage() {
 
   if (!job) {
     return (
-      <div className="min-h-screen bg-[#050816] pt-28 sm:pt-32 md:pt-36">
+      <div className="min-h-screen bg-[#050816] pt-20 sm:pt-24 md:pt-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 text-center">
         <p className="text-4xl mb-4">📋</p>
         <p className="text-dark-400">Job not found</p>
@@ -49,7 +49,7 @@ export default function JobDetailPage() {
   const assignedAgent = agents.find((a) => a.owner === job.assignedAgent);
 
   return (
-    <div className="min-h-screen bg-[#050816] pt-28 sm:pt-32 md:pt-36">
+    <div className="min-h-screen bg-[#050816] pt-20 sm:pt-24 md:pt-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs sm:text-sm text-dark-400 mb-6 sm:mb-8">
