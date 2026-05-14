@@ -7,7 +7,7 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand */}
           <div className="col-span-1 sm:col-span-2">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-3 mb-3">
               <img src="/logo-icon.jpg" alt="AgentForge" className="h-7 w-7 rounded-lg" />
               <span className="text-lg font-bold gradient-text">AgentForge</span>
             </div>

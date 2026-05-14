@@ -60,7 +60,7 @@ export function Navbar() {
                 alt="AgentForge"
                 className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl ring-1 ring-white/10 group-hover:ring-cyber-cyan/30 transition-all duration-300"
               />
-              <span className="text-base sm:text-xl font-bold font-space gradient-text-premium">AgentForge</span>
+              <span className="text-base sm:text-xl font-bold font-space gradient-text-premium ml-1.5 sm:ml-2">AgentForge</span>
             </Link>
 
             {/* Desktop Nav */}
