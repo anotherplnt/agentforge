@@ -139,7 +139,7 @@ export default function JobsPage() {
       <div className="absolute bottom-1/4 right-[15%] w-40 h-40 rounded-full bg-accent-400/8 backdrop-blur-2xl border border-white/5 float-slow pointer-events-none" style={{ animationDelay: "1.5s" }} />
 
       {/* ─── Hero Header ─── */}
-      <section className="relative z-10 pt-24 sm:pt-24 sm:pt-32 md:pt-40 pb-8 sm:pb-12 md:pb-16">
+      <section className="relative z-10 pt-28 sm:pt-32 md:pt-40 pb-8 sm:pb-12 md:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="text-reveal">
             <p className="text-xs uppercase tracking-[0.3em] text-dark-400 mb-3 sm:mb-4">Jobs Board</p>
