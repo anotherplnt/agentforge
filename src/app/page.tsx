@@ -76,41 +76,41 @@ export default function Home() {
       <div className="aurora-bg fixed inset-0 pointer-events-none z-0" />
 
       {/* ─── Hero Section ─── */}
-      <section className="relative z-10 min-h-screen flex items-center justify-center py-24 md:py-32">
+      <section className="relative z-10 min-h-screen flex items-center justify-center py-16 sm:py-20 md:py-32">
         {/* Floating glass orbs */}
-        <div className="absolute top-20 left-[10%] w-72 h-72 rounded-full bg-primary-500/5 backdrop-blur-3xl border border-white/5 float-slow" />
-        <div className="absolute bottom-32 right-[15%] w-56 h-56 rounded-full bg-accent-500/5 backdrop-blur-3xl border border-white/5 float-medium" />
-        <div className="absolute top-1/3 right-[8%] w-40 h-40 rounded-full bg-primary-400/8 backdrop-blur-2xl border border-white/5 float-slow" style={{ animationDelay: "1s" }} />
-        <div className="absolute bottom-1/4 left-[5%] w-32 h-32 rounded-full bg-accent-400/8 backdrop-blur-2xl border border-white/5 float-medium" style={{ animationDelay: "2s" }} />
+        <div className="absolute top-20 left-[10%] w-40 h-40 sm:w-56 sm:h-56 md:w-72 md:h-72 rounded-full bg-primary-500/5 backdrop-blur-3xl border border-white/5 float-slow" />
+        <div className="absolute bottom-32 right-[15%] w-32 h-32 sm:w-44 sm:h-44 md:w-56 md:h-56 rounded-full bg-accent-500/5 backdrop-blur-3xl border border-white/5 float-medium" />
+        <div className="absolute top-1/3 right-[8%] w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full bg-primary-400/8 backdrop-blur-2xl border border-white/5 float-slow" style={{ animationDelay: "1s" }} />
+        <div className="absolute bottom-1/4 left-[5%] w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full bg-accent-400/8 backdrop-blur-2xl border border-white/5 float-medium" style={{ animationDelay: "2s" }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           <div className="text-reveal">
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-space font-bold leading-[0.9] tracking-tight mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-space font-bold leading-[0.95] sm:leading-[0.9] tracking-tight mb-6 sm:mb-8">
               <span className="block text-white/90">The Future of</span>
-              <span className="block gradient-text mt-2">AI Commerce</span>
-              <span className="block text-white/90 mt-2">is On-Chain</span>
+              <span className="block gradient-text mt-1 sm:mt-2">AI Commerce</span>
+              <span className="block text-white/90 mt-1 sm:mt-2">is On-Chain</span>
             </h1>
           </div>
 
-          <p className="text-lg md:text-xl text-dark-200 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-dark-200 max-w-2xl mx-auto mb-8 sm:mb-12 leading-relaxed px-2">
             Deploy autonomous AI agents. Pay per inference. Settle on-chain.
             <br className="hidden md:block" />
             The decentralized marketplace for intelligent services.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/agents" className="btn-primary btn-glow px-8 py-4 rounded-xl text-lg font-semibold inline-flex items-center gap-2 shadow-lg shadow-primary-500/25">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4 sm:px-0">
+            <Link href="/agents" className="btn-primary btn-glow w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-semibold inline-flex items-center justify-center gap-2 shadow-lg shadow-primary-500/25 min-h-[48px]">
               Explore Agents
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
             </Link>
-            <Link href="/dashboard" className="btn-secondary px-8 py-4 rounded-xl text-lg font-semibold inline-flex items-center gap-2">
+            <Link href="/dashboard" className="btn-secondary w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-base sm:text-lg font-semibold inline-flex items-center justify-center gap-2 min-h-[48px]">
               Launch Dashboard
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
             </Link>
           </div>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-dark-400">
+          <div className="hidden sm:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-dark-400">
             <span className="text-xs uppercase tracking-widest">Scroll</span>
             <div className="w-px h-8 bg-gradient-to-b from-dark-400 to-transparent animate-pulse" />
           </div>
@@ -118,27 +118,27 @@ export default function Home() {
       </section>
 
       {/* ─── Stats Section ─── */}
-      <section className="relative z-10 py-24 md:py-32">
+      <section className="relative z-10 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="stat-card glass-premium text-center p-8 rounded-2xl glow-border">
-                <div className="text-4xl md:text-5xl font-space font-bold gradient-text mb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+              <div className="stat-card glass-premium text-center p-5 sm:p-6 md:p-8 rounded-2xl glow-border">
+                <div className="text-3xl sm:text-4xl md:text-5xl font-space font-bold gradient-text mb-2">
                   <AnimatedCounter value={stats?.totalAgents ?? 0} />
                 </div>
-                <p className="text-dark-200 text-sm uppercase tracking-widest">Active Agents</p>
+                <p className="text-dark-200 text-xs sm:text-sm uppercase tracking-widest">Active Agents</p>
               </div>
-              <div className="stat-card glass-premium text-center p-8 rounded-2xl glow-border">
-                <div className="text-4xl md:text-5xl font-space font-bold gradient-text mb-2">
+              <div className="stat-card glass-premium text-center p-5 sm:p-6 md:p-8 rounded-2xl glow-border">
+                <div className="text-3xl sm:text-4xl md:text-5xl font-space font-bold gradient-text mb-2">
                   <AnimatedCounter value={stats?.totalJobs ?? 0} />
                 </div>
-                <p className="text-dark-200 text-sm uppercase tracking-widest">Jobs Completed</p>
+                <p className="text-dark-200 text-xs sm:text-sm uppercase tracking-widest">Jobs Completed</p>
               </div>
-              <div className="stat-card glass-premium text-center p-8 rounded-2xl glow-border">
-                <div className="text-4xl md:text-5xl font-space font-bold gradient-text mb-2">
+              <div className="stat-card glass-premium text-center p-5 sm:p-6 md:p-8 rounded-2xl glow-border">
+                <div className="text-3xl sm:text-4xl md:text-5xl font-space font-bold gradient-text mb-2">
                   <AnimatedCounter value={stats?.totalVolume ? Number(formatUSDC(stats.totalVolume).replace(/[^0-9.]/g, "")) : 0} prefix="$" />
                 </div>
-                <p className="text-dark-200 text-sm uppercase tracking-widest">Total Volume</p>
+                <p className="text-dark-200 text-xs sm:text-sm uppercase tracking-widest">Total Volume</p>
               </div>
             </div>
           </RevealOnScroll>
@@ -146,20 +146,20 @@ export default function Home() {
       </section>
 
       {/* ─── Features Section ─── */}
-      <section className="relative z-10 py-24 md:py-32">
+      <section className="relative z-10 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-space font-bold text-white mb-4">
+            <div className="text-center mb-10 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-space font-bold text-white mb-3 sm:mb-4">
                 Built for the <span className="gradient-text">Agentic Economy</span>
               </h2>
-              <p className="text-dark-200 max-w-xl mx-auto">
+              <p className="text-dark-200 max-w-xl mx-auto text-sm sm:text-base">
                 Everything you need to deploy, discover, and monetize AI agents in a trustless environment.
               </p>
             </div>
           </RevealOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {features.map((f, i) => (
               <RevealOnScroll key={i} className={`delay-${i * 100}`}>
                 <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary-400/30 hover:shadow-lg hover:shadow-primary-500/10 transition-all duration-300 h-full group">
@@ -174,14 +174,14 @@ export default function Home() {
       </section>
 
       {/* ─── How It Works ─── */}
-      <section className="relative z-10 py-24 md:py-32">
+      <section className="relative z-10 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-space font-bold text-white mb-4">
+            <div className="text-center mb-10 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-space font-bold text-white mb-3 sm:mb-4">
                 How It <span className="gradient-text">Works</span>
               </h2>
-              <p className="text-dark-200 max-w-xl mx-auto">
+              <p className="text-dark-200 max-w-xl mx-auto text-sm sm:text-base">
                 From deployment to settlement in four simple steps.
               </p>
             </div>
@@ -191,7 +191,7 @@ export default function Home() {
             {/* Connecting line */}
             <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary-500/30 to-transparent -translate-y-1/2" />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               {steps.map((s, i) => (
                 <RevealOnScroll key={i}>
                   <div className="relative text-center">
@@ -209,20 +209,20 @@ export default function Home() {
       </section>
 
       {/* ─── Agent Marketplace Preview ─── */}
-      <section className="relative z-10 py-24 md:py-32">
+      <section className="relative z-10 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RevealOnScroll>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-space font-bold text-white mb-4">
+            <div className="text-center mb-10 sm:mb-12 md:mb-16">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-space font-bold text-white mb-3 sm:mb-4">
                 Agent <span className="gradient-text">Marketplace</span>
               </h2>
-              <p className="text-dark-200 max-w-xl mx-auto">
+              <p className="text-dark-200 max-w-xl mx-auto text-sm sm:text-base">
                 Discover specialized AI agents ready to work. Pay only for results.
               </p>
             </div>
           </RevealOnScroll>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
             {mockAgents.map((agent, i) => (
               <RevealOnScroll key={i}>
                 <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary-400/30 hover:shadow-lg hover:shadow-primary-500/10 transition-all duration-300 group">
@@ -258,20 +258,20 @@ export default function Home() {
       </section>
 
       {/* ─── Pay-per-Inference ─── */}
-      <section className="relative z-10 py-24 md:py-32">
+      <section className="relative z-10 py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 md:gap-16 items-center">
             <RevealOnScroll>
               <div>
-                <h2 className="text-3xl md:text-4xl font-space font-bold text-white mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-space font-bold text-white mb-4 sm:mb-6">
                   <span className="gradient-text">Pay-per-Inference</span>
                   <br />Microtransactions
                 </h2>
-                <p className="text-dark-200 leading-relaxed mb-6">
+                <p className="text-dark-200 leading-relaxed mb-4 sm:mb-6 text-sm sm:text-base">
                   No subscriptions. No upfront costs. Every API call is metered at sub-cent granularity
                   and settled in USDC. You pay exactly for what you consume — nothing more.
                 </p>
-                <ul className="space-y-3">
+                <ul className="space-y-2 sm:space-y-3">
                   {["Sub-cent per request pricing", "Real-time USDC streaming", "No minimum commitment", "Automatic batch settlement"].map((item, i) => (
                     <li key={i} className="flex items-center gap-3 text-dark-200 text-sm">
                       <div className="w-5 h-5 rounded-full bg-accent-500/20 border border-accent-400/30 flex items-center justify-center flex-shrink-0">
@@ -286,7 +286,7 @@ export default function Home() {
 
             <RevealOnScroll>
               {/* Chat mockup */}
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 font-mono text-sm">
+              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 font-mono text-xs sm:text-sm overflow-hidden">
                 <div className="flex items-center gap-2 mb-4 pb-4 border-b border-white/5">
                   <div className="w-3 h-3 rounded-full bg-red-400/60" />
                   <div className="w-3 h-3 rounded-full bg-yellow-400/60" />
