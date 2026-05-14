@@ -979,9 +979,12 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   const [depositTxHash, setDepositTxHash] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages, isTyping]);
 
   const selectedAgent = agents.length > 0 ? agents[0] : { id: 1, name: "FOOM", description: "AI Agent specialized in text generation, code review, and data analysis" };
@@ -1213,7 +1216,7 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
             </div>
 
             {/* Messages */}
-            <div className="h-[320px] sm:h-[420px] overflow-y-auto p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4 scroll-smooth" style={{ overscrollBehavior: "contain" }}>
+            <div ref={chatContainerRef} className="h-[320px] sm:h-[420px] overflow-y-auto p-3 sm:p-4 md:p-5 space-y-3 sm:space-y-4 scroll-smooth" style={{ overscrollBehavior: "contain" }}>
               {messages.map((msg, i) => (
                 <div
                   key={i}
@@ -1252,7 +1255,7 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
                   </div>
                 </div>
               )}
-              <div ref={messagesEndRef} />
+
             </div>
 
             {/* Input */}
