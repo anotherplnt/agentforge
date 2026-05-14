@@ -981,6 +981,14 @@ function InferenceTab({ agents, address }: { agents: any[]; address: string }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  // Reset chat when wallet disconnects
+  useEffect(() => {
+    if (!address) {
+      setMessages([{ role: "agent", content: "Hello! I'm FOOM, your AI Agent on AgentForge. Each message costs $0.01 USDC via nanopayments. How can I help you today?" }]);
+      setTotalCost(0);
+    }
+  }, [address]);
+
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;

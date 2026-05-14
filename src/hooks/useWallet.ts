@@ -76,6 +76,7 @@ export const useWalletStore = create<WalletState>((set, get) => ({
   disconnect: () => {
     set({ address: null, isConnected: false, chainId: null });
     localStorage.removeItem("agentforge_connected");
+    localStorage.removeItem("agentforge_chat_history");
   },
 
   autoConnect: async () => {
