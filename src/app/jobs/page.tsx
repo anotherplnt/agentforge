@@ -83,8 +83,8 @@ type SortKey = "newest" | "highest" | "ending";
 const STATUS_TABS: { id: StatusTab; label: string; statuses: number[] }[] = [
   { id: "All", label: "All", statuses: [] },
   { id: "Open", label: "Open", statuses: [0] },
-  { id: "Bidding", label: "Bidding", statuses: [0, 1] },
-  { id: "InProgress", label: "In Progress", statuses: [2, 3] },
+  { id: "Bidding", label: "Bidding", statuses: [0] },
+  { id: "InProgress", label: "In Progress", statuses: [1, 2, 3] },
   { id: "Completed", label: "Completed", statuses: [4] },
 ];
 
@@ -123,8 +123,8 @@ export default function JobsPage() {
   const counts = {
     All: jobs.length,
     Open: jobs.filter((j) => j.status === 0).length,
-    Bidding: jobs.filter((j) => j.status === 0 || j.status === 1).length,
-    InProgress: jobs.filter((j) => j.status === 2 || j.status === 3).length,
+    Bidding: jobs.filter((j) => j.status === 0).length,
+    InProgress: jobs.filter((j) => j.status === 1 || j.status === 2 || j.status === 3).length,
     Completed: jobs.filter((j) => j.status === 4).length,
   };
 

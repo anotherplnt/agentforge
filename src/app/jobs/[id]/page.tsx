@@ -268,6 +268,30 @@ export default function JobDetailPage() {
                     </>
                   )}
 
+                  {/* Status 1: Assigned — Agent can start work */}
+                  {job.status === 1 && address?.toLowerCase() === job.assignedAgent?.toLowerCase() && (
+                    <button
+                      onClick={async () => {
+                        setBidding(true); setBidError(null); setBidSuccess(false);
+                        try {
+                          await switchToArcTestnet();
+                          const hash = await sendContractTx({
+                            address: CONTRACT_ADDRESS, abi: AGENTFORGE_ABI,
+                            functionName: "startJob",
+                            args: [BigInt(job.id)],
+                            from: address!,
+                          });
+                          setBidTxHash(hash); setBidSuccess(true);
+                          setTimeout(() => fetchJobs(), 3000);
+                        } catch (err: any) { setBidError(err?.shortMessage || err?.message || "Failed"); }
+                        finally { setBidding(false); }
+                      }}
+                      disabled={bidding} className="btn-primary w-full min-h-[48px] mb-2"
+                    >
+                      {bidding ? "⏳ Confirm..." : "▶️ Start Work"}
+                    </button>
+                  )}
+
                   {/* Status 1/2: Assigned/InProgress — Agent can submit deliverable */}
                   {(job.status === 1 || job.status === 2) && address?.toLowerCase() === job.assignedAgent?.toLowerCase() && (
                     <button
