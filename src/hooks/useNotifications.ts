@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createPublicClient, http } from "viem";
-import { CONTRACT_ADDRESS, ARC_TESTNET } from "@/lib/config";
+import { CONTRACTS, ARC_TESTNET } from "@/lib/config";
 import { AGENTFORGE_ABI } from "@/lib/abi";
+
+const CONTRACT_ADDRESS = CONTRACTS.agentForge as `0x${string}`;
 
 export interface Notification {
   id: string;
@@ -109,9 +111,15 @@ export function useNotifications(userAddress: string | null) {
         let fromBlock: bigint;
         try {
           const stored = localStorage.getItem(lastBlockKey);
-          fromBlock = stored ? BigInt(stored) : currentBlock - 100n;
+          // Default: last ~6 hours of history (12000 blocks at 2s/block)
+          fromBlock = stored ? BigInt(stored) : currentBlock - 12000n;
         } catch {
-          fromBlock = currentBlock - 100n;
+          fromBlock = currentBlock - 12000n;
+        }
+
+        // Cap range to prevent huge queries (max 5000 blocks per poll)
+        if (currentBlock - fromBlock > 5000n) {
+          fromBlock = currentBlock - 5000n;
         }
 
         if (fromBlock >= currentBlock) {
@@ -160,8 +168,9 @@ export function useNotifications(userAddress: string | null) {
           const args = log.args as any;
           const jobId = Number(args.jobId);
           const txHash = log.transactionHash;
-          const block = await client.getBlock({ blockNumber: log.blockNumber });
-          const timestamp = Number(block.timestamp) * 1000;
+          // Estimate timestamp from block (Arc ~2s/block, current block as anchor)
+          const blocksDiff = Number(currentBlock - BigInt(log.blockNumber));
+          const timestamp = Date.now() - blocksDiff * 2000;
 
           // Get job to determine if user is involved
           let jobData: any = null;
