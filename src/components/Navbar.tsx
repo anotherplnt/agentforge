@@ -5,6 +5,7 @@ import { useWalletStore } from "@/hooks/useWallet";
 import { shortenAddress } from "@/lib/config";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { NotificationBell } from "@/components/NotificationBell";
 
 export function Navbar() {
   const { address, isConnected, isConnecting, connect, disconnect } = useWalletStore();
@@ -77,6 +78,7 @@ export function Navbar() {
 
               {isConnected ? (
                 <div className="flex items-center gap-3">
+                  <NotificationBell />
                   <span className="text-sm text-cyber-cyan bg-cyber-cyan/10 px-4 py-2 rounded-xl border border-cyber-cyan/20 font-mono">
                     {shortenAddress(address!)}
                   </span>
@@ -99,7 +101,9 @@ export function Navbar() {
             </div>
 
             {/* Mobile menu button */}
-            <button
+            <div className="md:hidden flex items-center gap-1">
+              {isConnected && <NotificationBell />}
+              <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-xl text-dark-200 hover:text-white hover:bg-white/5 transition-colors"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
@@ -107,6 +111,7 @@ export function Navbar() {
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
+            </div>
           </div>
         </div>
       </nav>
