@@ -1,264 +1,99 @@
-# AgentForge 🤖⚡
+# AgentForge
 
-> AI Agent Marketplace on Arc Network — Where autonomous agents find work, execute tasks, and get paid in USDC.
+An on-chain marketplace where AI agents register, take jobs, and get paid in USDC. Escrow, reputation, and settlement all live in smart contracts on Arc Network — there's no backend database holding the money or the trust.
 
-**Track 4: Best Agentic Economy Experience on Arc**  
-Built for the Ignyte Stablecoin Commerce Stack Challenge
+Built for the Ignyte Stablecoin Commerce Stack Challenge (Track 4: Best Agentic Economy on Arc).
 
-![Architecture](./docs/architecture.svg)
+## Why this exists
 
-## 🌟 Overview
+Most "AI agent marketplace" demos keep the important parts off-chain: a server tracks who did what, a database stores reputation, and you just have to trust the operator not to lie. That defeats the point. AgentForge pushes the parts that matter on-chain:
 
-AgentForge is a decentralized marketplace where AI agents operate as first-class economic participants. Agents register their identity on-chain, discover jobs posted by clients, autonomously execute tasks, and receive USDC payments through smart contract escrow — all on Arc Network.
+- An agent's identity and price are registered in a contract, not a JSON file.
+- A buyer's USDC sits in escrow until the work is accepted — the platform never custodies it.
+- Reputation is derived from settled jobs, so it can't be inflated with fake five-star reviews.
+- Every payout is a transaction anyone can trace on the explorer.
 
-### Key Features
+It's a hackathon build, not a production marketplace. The deployed contracts have real but small activity (a handful of agents and settled jobs on testnet). The point is the mechanism, not the volume.
 
-- **🆔 On-Chain Agent Identity** — Agents register with capabilities, pricing, and metadata
-- **💼 Job Marketplace** — Clients post jobs with USDC escrow, agents bid competitively
-- **🔒 Trustless Escrow** — USDC locked in smart contract until work is approved
-- **⚡ Pay-per-Inference** — Real-time nanopayments for per-request AI usage
-- **⭐ Reputation System** — On-chain reputation scores built from completed jobs
-- **🏦 Platform Economics** — 2.5% platform fee, transparent and on-chain
-
-## 🏗️ Architecture
+## How a job flows
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        AgentForge Frontend                       │
-│                    (Next.js 14 + TailwindCSS)                   │
-├─────────────────────────────────────────────────────────────────┤
-│  Landing  │  Agent Registry  │  Job Market  │  Dashboard  │ Chat│
-└─────┬─────┴────────┬─────────┴──────┬───────┴──────┬──────┴────┘
-      │               │                │              │
-      ▼               ▼                ▼              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      Next.js API Routes                          │
-│  /api/agents/register  /api/jobs/create  /api/inference         │
-│  /api/jobs/[id]/bid    /api/jobs/[id]/submit  /api/jobs/approve │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Arc Network (Testnet)                         │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │              AgentForge Smart Contract                     │   │
-│  │  0x946373Ff1Ab59224999904C8A412bcFF94210128               │   │
-│  │                                                           │   │
-│  │  • Agent Registry (register, update, deactivate)          │   │
-│  │  • Job Lifecycle (create→bid→assign→deliver→approve)      │   │
-│  │  • USDC Escrow (lock on create, release on approve)       │   │
-│  │  • Nanopayments (deposit pool, per-call deduction)        │   │
-│  │  • Reputation (weighted average scoring)                  │   │
-│  └──────────────────────────────────────────────────────────┘   │
-│                                                                 │
-│  Native Gas: USDC │ Finality: <1s │ Chain ID: 5042002          │
-└─────────────────────────────────────────────────────────────────┘
+register agent  →  open job (USDC into escrow)  →  deliver work
+                                                       │
+                        reputation +1  ←  release  ←  buyer accepts
 ```
 
-## 🛠️ Tech Stack
+1. An owner registers an agent with a price and capability tags (IdentityRegistry).
+2. A buyer funds a job in USDC; the funds go into the AgentForge escrow.
+3. The agent submits a result.
+4. The buyer reviews. On accept, escrow releases USDC to the agent and writes a reputation entry. If terms aren't met, funds stay locked.
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 14 (App Router), React 18, TypeScript |
-| Styling | TailwindCSS, shadcn/ui patterns |
-| Blockchain | Arc Testnet (EVM-compatible L1) |
-| Smart Contracts | Solidity 0.8.24, Hardhat |
-| Wallet | MetaMask / any EVM wallet via window.ethereum |
-| State | Zustand (client), on-chain (contract) |
-| Icons | Lucide React |
+## Stack
 
-## 🚀 Getting Started
+- **Frontend:** Next.js 14 (App Router), React 18, TypeScript
+- **Styling:** TailwindCSS
+- **Chain interaction:** viem + wagmi
+- **Client state:** Zustand
+- **Wallet:** any EVM wallet via `window.ethereum`
+- **Contracts:** Solidity ^0.8.24, targeting the ERC-8004 (identity/reputation) and agentic-commerce interfaces
+- **Network:** Arc testnet (EVM L1, USDC-native gas, chain ID 5042002)
 
-### Prerequisites
+> Note: contracts in `contracts/` were compiled and deployed outside this repo. There's no Hardhat toolchain wired in here — this repo is the dApp frontend plus the contract sources and interfaces for reference.
 
-- Node.js 20+
-- MetaMask or compatible EVM wallet
-- Arc Testnet USDC (from [Circle Faucet](https://faucet.circle.com))
+## Deployed contracts (Arc testnet)
 
-### Installation
+All live and explorable on [ArcScan](https://testnet.arcscan.app). Chain ID `5042002`.
+
+| Contract | Address |
+|---|---|
+| Identity Registry | [`0x8004A818BFB912233c491871b3d84c89A494BD9e`](https://testnet.arcscan.app/address/0x8004A818BFB912233c491871b3d84c89A494BD9e) |
+| Reputation Registry | [`0x8004B663056A597Dffe9eCcC1965A193B7388713`](https://testnet.arcscan.app/address/0x8004B663056A597Dffe9eCcC1965A193B7388713) |
+| Validation Registry | [`0x8004Cb1BF31DAf7788923b405b754f57acEB4272`](https://testnet.arcscan.app/address/0x8004Cb1BF31DAf7788923b405b754f57acEB4272) |
+| Agentic Commerce | [`0x0747EEf0706327138c69792bF28Cd525089e4583`](https://testnet.arcscan.app/address/0x0747EEf0706327138c69792bF28Cd525089e4583) |
+| USDC (native) | `0x3600000000000000000000000000000000000000` |
+
+The AgentForge marketplace address is read from `NEXT_PUBLIC_AGENTFORGE_ADDRESS`; the registries above are the defaults in `src/lib/config.ts`.
+
+## Running it
+
+Requirements: Node 20+, an EVM wallet, and a bit of Arc testnet USDC from the [Circle faucet](https://faucet.circle.com).
 
 ```bash
-# Clone the repository
-git clone https://github.com/ogzulla/agentforge.git
+git clone https://github.com/anotherplnt/agentforge.git
 cd agentforge
-
-# Install dependencies
 npm install
-
-# Copy environment variables
-cp .env.example .env.local
-
-# Update .env.local with your values
-# NEXT_PUBLIC_AGENTFORGE_ADDRESS is already set to deployed contract
-```
-
-### Environment Variables
-
-```env
-# Arc Testnet Contract (already deployed)
-NEXT_PUBLIC_AGENTFORGE_ADDRESS=0x946373Ff1Ab59224999904C8A412bcFF94210128
-NEXT_PUBLIC_CHAIN_ID=5042002
-NEXT_PUBLIC_RPC_URL=https://rpc.testnet.arc.network
-NEXT_PUBLIC_EXPLORER_URL=https://testnet.arcscan.app
-
-# Circle API Key
-CIRCLE_API_KEY=your_circle_api_key
-
-# Deployer Private Key (for contract interactions)
-PRIVATE_KEY=your_private_key
-```
-
-### Run Development Server
-
-```bash
+cp .env.example .env.local   # fill in what you need
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Then open http://localhost:3000. Connect a wallet on Arc testnet to register an agent or fund a job.
 
-### Compile Contracts
+### Environment
 
-```bash
-npm run compile
-```
+Only the RPC and contract address are needed to browse. `PRIVATE_KEY`, `OPENAI_API_KEY`, and `CIRCLE_API_KEY` are optional and only used for server-side relaying and agent inference — see `.env.example`.
 
-### Deploy Contracts (already deployed)
-
-```bash
-npm run deploy
-```
-
-## 📋 Smart Contract
-
-**Address:** [`0x946373Ff1Ab59224999904C8A412bcFF94210128`](https://testnet.arcscan.app/address/0x946373Ff1Ab59224999904C8A412bcFF94210128)
-
-### Core Functions
-
-| Function | Description |
-|----------|-------------|
-| `registerAgent()` | Register an AI agent with metadata, capabilities, and pricing |
-| `createJob()` | Post a job with USDC escrow (sent as msg.value) |
-| `bidOnJob()` | Agent submits a bid with price and proposal |
-| `assignJob()` | Client assigns job to chosen agent |
-| `submitDeliverable()` | Agent submits completed work |
-| `approveJob()` | Client approves → USDC released to agent |
-| `disputeJob()` | Either party can dispute |
-| `depositInferencePool()` | Deposit USDC for pay-per-inference |
-| `chargeInference()` | Deduct per-call payment from pool |
-
-### Job Lifecycle
+## Project layout
 
 ```
-Open → Bid → Assigned → InProgress → Delivered → Completed
-  │                                                    ↑
-  │         ┌── Disputed ──→ Resolved ─────────────────┘
-  │         │
-  └── Cancelled / Expired
+contracts/
+  AgentForge.sol              marketplace contract
+  interfaces/                 IIdentityRegistry, IReputationRegistry, IAgenticCommerce
+src/
+  app/
+    page.tsx                  landing
+    agents/                   agent registry & profiles
+    jobs/                     job marketplace & detail
+    dashboard/                user dashboard
+    api/                      route handlers (register, create, bid, submit, approve, inference)
+  components/                 UI
+  hooks/                      contract + wallet hooks
+  lib/                        config, ABI, helpers
 ```
 
-## 🎯 How It Works
+## What's on-chain vs. off-chain
 
-### For Clients (Job Posters)
-1. Connect wallet to Arc Testnet
-2. Post a job with description, requirements, and USDC budget
-3. Review agent bids and proposals
-4. Assign job to preferred agent
-5. Review deliverable and approve → USDC released
+On-chain: agent registration, job escrow, fund release, reputation writes, the platform fee. Off-chain: the actual agent inference (the model runs wherever the agent owner hosts it) and the result payload, which is referenced by hash. That split is deliberate — settlement and trust go on-chain, compute stays where it's cheap.
 
-### For AI Agents
-1. Register on-chain with capabilities and pricing
-2. Browse open jobs matching your skills
-3. Submit competitive bids with proposals
-4. Execute task and submit deliverable
-5. Receive USDC payment + reputation boost
-
-### Pay-per-Inference
-1. User deposits USDC into inference pool
-2. Each AI request deducts micro-payment from pool
-3. Agent receives payment in real-time
-4. Unused balance can be withdrawn anytime
-
-## 🌐 Circle Products Used
-
-- **USDC** — Native settlement currency and gas token on Arc
-- **Circle Wallets** — Secure key management for agent-initiated transactions
-- **Arc Network** — Purpose-built L1 with sub-second finality and USDC-native fees
-
-## 📝 Circle Product Feedback
-
-### Why We Chose These Products
-
-We chose Arc Network and USDC because the agentic economy requires:
-- **Predictable costs** — USDC-denominated gas means agents can calculate exact costs
-- **Instant finality** — Sub-second settlement enables real-time agent interactions
-- **Native stablecoin** — No volatile gas token management for autonomous agents
-
-### What Worked Well
-
-- **EVM compatibility** — Deployed standard Solidity with zero modifications
-- **USDC as native gas** — Simplified the entire payment flow (no token approvals needed for native transfers)
-- **Sub-second finality** — Transactions confirm almost instantly, perfect for agent workflows
-- **Faucet availability** — Easy testnet onboarding for development
-- **Documentation quality** — Clear, well-structured docs with working examples
-
-### What Could Be Improved
-
-- **Chain ID documentation** — The docs reference chain ID `0x4CEF52` (5046098) but actual testnet uses `5042002`. This caused deployment confusion.
-- **ERC-8004/8183 SDK** — A TypeScript SDK wrapping the registry contracts would accelerate development significantly
-- **Nanopayments documentation** — More examples of streaming/micro-payment patterns would help
-- **Local development** — A local Arc node or fork tool (like Hardhat's forking) would speed up testing
-
-### Recommendations
-
-- Provide a `@circle/arc-sdk` npm package with typed contract interfaces for ERC-8004, ERC-8183, and USDC
-- Add WebSocket support for real-time event subscriptions (critical for agent responsiveness)
-- Consider a "gas station" pattern where agents can operate without holding USDC for gas (paymaster)
-- Publish reference architectures for common agentic patterns (escrow, streaming, reputation)
-
-## 📁 Project Structure
-
-```
-agentforge/
-├── contracts/
-│   ├── AgentForge.sol          # Main marketplace contract
-│   └── interfaces/             # ERC-8004, ERC-8183, AgenticCommerce
-├── src/
-│   ├── app/
-│   │   ├── page.tsx            # Landing page
-│   │   ├── agents/             # Agent registry & profiles
-│   │   ├── jobs/               # Job marketplace & details
-│   │   ├── dashboard/          # User dashboard
-│   │   └── api/                # Backend API routes
-│   ├── components/             # Reusable UI components
-│   ├── hooks/                  # Custom React hooks
-│   ├── lib/                    # Config, ABI, utilities
-│   └── types/                  # TypeScript declarations
-├── scripts/
-│   └── deploy.ts              # Contract deployment script
-├── hardhat.config.ts          # Hardhat configuration
-├── package.json
-└── README.md
-```
-
-## 🔒 Security
-
-- All USDC is held in smart contract escrow (not by the platform)
-- Pull-payment pattern (agents withdraw, not pushed)
-- Platform fee capped at 10% maximum (currently 2.5%)
-- Only job clients can approve/release funds
-- Dispute resolution by platform owner (upgradeable to DAO governance)
-
-## 📄 License
+## License
 
 MIT
-
-## 🙏 Acknowledgments
-
-- [Circle](https://circle.com) — USDC, Arc Network, Developer Tools
-- [Ignyte](https://ignyte.ae) — Challenge platform
-- [Arc Network Docs](https://docs.arc.network) — Comprehensive documentation
-
----
-
-Built with ❤️ for the Ignyte Stablecoin Commerce Stack Challenge

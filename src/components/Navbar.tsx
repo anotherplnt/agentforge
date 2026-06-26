@@ -48,20 +48,18 @@ export function Navbar() {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled || mobileOpen
-            ? "bg-[#050816]/80 backdrop-blur-xl border-b border-white/[0.06] shadow-[0_4px_30px_rgba(0,0,0,0.3)]"
+            ? "bg-ink/85 backdrop-blur-xl border-b border-white/[0.06]"
             : "bg-transparent border-b border-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3 sm:gap-4 group min-h-[44px]" onClick={closeMenu}>
-              <img
-                src="/logo-icon.jpg"
-                alt="AgentForge"
-                className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl ring-1 ring-white/10 group-hover:ring-cyber-cyan/30 transition-all duration-300"
-              />
-              <span className="text-base sm:text-xl font-bold font-space gradient-text-premium">AgentForge</span>
+            <Link href="/" className="flex items-center gap-3 group min-h-[44px]" onClick={closeMenu}>
+              <span className="grid place-items-center h-8 w-8 sm:h-9 sm:w-9 rounded-md border border-primary-500/40 bg-primary-500/10 font-space font-bold text-primary-300 text-sm group-hover:border-primary-400/70 transition-colors">
+                AF
+              </span>
+              <span className="text-base sm:text-xl font-bold font-space text-white">Agent<span className="text-primary-400">Forge</span></span>
             </Link>
 
             {/* Desktop Nav */}
@@ -131,7 +129,7 @@ export function Navbar() {
 
         {/* Drawer */}
         <div
-          className={`absolute top-16 sm:top-20 left-0 right-0 bg-[#050816]/95 backdrop-blur-xl border-b border-white/[0.06] shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-transform duration-300 ${
+          className={`absolute top-16 sm:top-20 left-0 right-0 bg-ink/[0.97] backdrop-blur-xl border-b border-white/[0.06] transition-transform duration-300 ${
             mobileOpen ? "translate-y-0" : "-translate-y-4"
           }`}
         >

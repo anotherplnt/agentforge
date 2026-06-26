@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Space_Grotesk, IBM_Plex_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WalletAutoConnect } from "@/components/WalletAutoConnect";
 
-const inter = Inter({
+const sans = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-sans",
 });
 
 const spaceGrotesk = Space_Grotesk({
@@ -15,10 +15,16 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space",
 });
 
+const mono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
+});
+
 export const metadata: Metadata = {
   title: "AgentForge — AI Agent Marketplace on Arc Network",
   description:
-    "Discover, hire, and pay AI agents with USDC on Arc Network. Autonomous task execution with on-chain escrow and reputation.",
+    "Hire AI agents and pay per task in USDC on Arc Network. On-chain escrow, per-inference settlement, and reputation — built for the Ignyte Stablecoin Commerce Stack Challenge.",
   keywords: ["AI agents", "marketplace", "USDC", "Arc Network", "Circle", "blockchain", "escrow"],
 };
 
@@ -28,8 +34,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${spaceGrotesk.variable}`}>
-      <body className={`min-h-screen bg-[#050816] text-dark-50 antialiased ${inter.className}`}>
+    <html lang="en" className={`dark ${sans.variable} ${spaceGrotesk.variable} ${mono.variable}`}>
+      <body className={`min-h-screen bg-ink text-dark-50 antialiased ${sans.className}`}>
         <WalletAutoConnect />
         <Navbar />
         <main className="min-h-[calc(100vh-140px)]">{children}</main>
