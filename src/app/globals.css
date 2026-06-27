@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────
-   AgentForge — ink + gold system
-   Near-black warm ground, single warm-gold accent, hairline rules.
+   AgentForge — ink + cobalt system
+   Near-black cool ground, single cobalt-blue accent with cyan highlight, hairline rules.
    No multi-color gradients, no aurora, no glow soup.
    ───────────────────────────────────────────────────────────── */
 
@@ -12,8 +12,8 @@
   :root {
     --background: 240 6% 4%;
     --foreground: 240 5% 93%;
-    --gold: #dca942;
-    --gold-dim: #c8922f;
+    --gold: #3b6bff;
+    --gold-dim: #2b4fe0;
     --line: rgba(255, 255, 255, 0.08);
     --line-strong: rgba(255, 255, 255, 0.14);
   }
@@ -25,7 +25,7 @@
   }
 
   ::selection {
-    background: rgba(220, 169, 66, 0.22);
+    background: rgba(59, 107, 255, 0.22);
     color: #fff;
   }
 
@@ -45,21 +45,21 @@
     @apply transition-colors duration-200;
   }
   .panel-hover:hover {
-    border-color: rgba(220, 169, 66, 0.35);
+    border-color: rgba(59, 107, 255, 0.35);
   }
 
   .glass-card {
     @apply rounded-lg border border-white/[0.08] bg-dark-900/60 backdrop-blur-sm;
   }
   .glass-card:hover {
-    border-color: rgba(220, 169, 66, 0.3);
+    border-color: rgba(59, 107, 255, 0.3);
   }
 
   .glass-premium {
     @apply rounded-lg border border-white/[0.08] bg-dark-900/50;
   }
   .glass-premium:hover {
-    border-color: rgba(220, 169, 66, 0.3);
+    border-color: rgba(59, 107, 255, 0.3);
   }
 
   .stat-card {
@@ -83,12 +83,12 @@
   .btn-glow {
     @apply inline-flex items-center justify-center rounded-md font-medium transition-all duration-200;
     background: var(--gold);
-    color: #1a1306;
+    color: #ffffff;
     box-shadow: none;
   }
   .btn-primary:hover:not(:disabled),
   .btn-glow:hover {
-    background: #e6b95f;
+    background: #5c83ff;
     transform: none;
   }
   .btn-primary:disabled {
@@ -104,7 +104,7 @@
   }
   .btn-secondary:hover,
   .btn-glow-secondary:hover {
-    border-color: rgba(220, 169, 66, 0.5);
+    border-color: rgba(59, 107, 255, 0.5);
     color: #fff;
     background: rgba(255, 255, 255, 0.02);
     transform: none;
@@ -113,10 +113,10 @@
   .btn-accent {
     @apply inline-flex items-center justify-center rounded-md font-medium transition-colors duration-200;
     background: var(--gold);
-    color: #1a1306;
+    color: #ffffff;
   }
   .btn-accent:hover {
-    background: #e6b95f;
+    background: #5c83ff;
   }
 
   /* ── Inputs ── */
@@ -126,7 +126,7 @@
     border: 1px solid var(--line);
   }
   .input-field:focus {
-    border-color: rgba(220, 169, 66, 0.5);
+    border-color: rgba(59, 107, 255, 0.5);
   }
 
   /* legacy aliases mapped to flat surfaces so other pages stay clean */
@@ -135,7 +135,7 @@
     @apply rounded-lg border border-white/[0.08] bg-dark-900/50 transition-colors duration-200;
   }
   .holo-card:hover {
-    border-color: rgba(220, 169, 66, 0.3);
+    border-color: rgba(59, 107, 255, 0.3);
   }
 }
 
